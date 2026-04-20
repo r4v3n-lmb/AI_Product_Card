@@ -224,21 +224,21 @@ window.PROFILE = {
     { k: 'NAME', v: 'Revan Lombard' },
     { k: 'HANDLE', v: '@r4v3n-lmb' },
     { k: 'ROLE', v: 'Solutions Architect' },
-    { k: 'LOCATION', v: 'Cape Town, ZA' },
-    { k: 'LANGUAGES', v: 'EN · AF · +3' },
+    { k: 'LOCATION', v: 'Johannesburg, ZA' },
+    { k: 'LANGUAGES', v: 'EN · AF' },
     { k: 'AVAILABILITY', v: '● Accepting briefs', tone: 'ok' },
   ],
   secondary: [
     { k: 'FOCUS', v: 'Localization · Ops · RAG' },
     { k: 'STACK', v: 'n8n · Python · OpenAI' },
-    { k: 'LEAD TIME', v: '1-wk sprint cycle' },
+    { k: 'LEAD TIME', v: '2-wk sprint cycle' },
   ],
 };
 
 window.CONTACT = [
   { k: 'Email',     v: 'r4v3n.lmb@gmail.com',                   href: 'mailto:r4v3n.lmb@gmail.com',              copy: 'r4v3n.lmb@gmail.com' },
   { k: 'Phone',     v: '+27 72 237 5833',                       href: 'tel:+27722375833',                        copy: '+27 72 237 5833' },
-  { k: 'Book',      v: 'calendly.com/techmate-sa',              href: 'https://calendly.com/techmate-sa',        copy: 'https://calendly.com/techmate-sa' },
+  { k: 'Book',      v: 'calendly.com/revan_lombard',              href: 'https://calendly.com/techmate-sa',        copy: 'https://calendly.com/techmate-sa' },
   { k: 'GitHub',    v: 'github.com/r4v3n-lmb',                  href: 'https://github.com/r4v3n-lmb',            copy: 'https://github.com/r4v3n-lmb' },
   { k: 'WhatsApp',  v: 'wa.me/27722375833',                     href: 'https://wa.me/27722375833',               copy: 'https://wa.me/27722375833' },
 ];

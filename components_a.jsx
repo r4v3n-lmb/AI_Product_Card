@@ -37,6 +37,23 @@ function SectionLabel({ num, title, coord }) {
 
 /* ============ HERO ============ */
 function Hero() {
+  const defaultProfile = {
+    primary: [
+      { k: 'NAME', v: 'Revan Lombard' },
+      { k: 'HANDLE', v: '@r4v3n-lmb' },
+      { k: 'ROLE', v: 'Solutions Architect' },
+      { k: 'LOCATION', v: 'Cape Town, ZA' },
+      { k: 'LANGUAGES', v: 'EN · AF · +3' },
+      { k: 'AVAILABILITY', v: '● Accepting briefs', tone: 'ok' },
+    ],
+    secondary: [
+      { k: 'FOCUS', v: 'Localization · Ops · RAG' },
+      { k: 'STACK', v: 'n8n · Python · OpenAI' },
+      { k: 'LEAD TIME', v: '1-wk sprint cycle' },
+    ],
+  };
+  const profile = window.PROFILE || defaultProfile;
+
   return (
     <section className="hero">
       <div className="hero-wrap">
@@ -66,18 +83,21 @@ function Hero() {
         <aside className="hero-card">
           <div className="title">Identity / Profile</div>
           <dl>
-            <dt>NAME</dt>        <dd>Revan Lombard</dd>
-            <dt>HANDLE</dt>      <dd>@r4v3n-lmb</dd>
-            <dt>ROLE</dt>        <dd>Solutions Architect</dd>
-            <dt>LOCATION</dt>    <dd>Cape Town, ZA</dd>
-            <dt>LANGUAGES</dt>   <dd>EN · AF · +3</dd>
-            <dt>AVAILABILITY</dt><dd style={{color:'var(--ok)'}}>● Accepting briefs</dd>
+            {profile.primary.map((item) => (
+              <React.Fragment key={item.k}>
+                <dt>{item.k}</dt>
+                <dd style={item.tone === 'ok' ? { color: 'var(--ok)' } : undefined}>{item.v}</dd>
+              </React.Fragment>
+            ))}
           </dl>
           <div className="divider"></div>
           <dl>
-            <dt>FOCUS</dt>    <dd>Localization · Ops · RAG</dd>
-            <dt>STACK</dt>    <dd>n8n · Python · OpenAI</dd>
-            <dt>LEAD TIME</dt><dd>1-wk sprint cycle</dd>
+            {profile.secondary.map((item) => (
+              <React.Fragment key={item.k}>
+                <dt>{item.k}</dt>
+                <dd>{item.v}</dd>
+              </React.Fragment>
+            ))}
           </dl>
         </aside>
       </div>

@@ -219,6 +219,22 @@ window.TESTIMONIAL = {
   company: 'Regional Towing Co. · Western Cape',
 };
 
+window.PROFILE = {
+  primary: [
+    { k: 'NAME', v: 'Revan Lombard' },
+    { k: 'HANDLE', v: '@r4v3n-lmb' },
+    { k: 'ROLE', v: 'Solutions Architect' },
+    { k: 'LOCATION', v: 'Cape Town, ZA' },
+    { k: 'LANGUAGES', v: 'EN · AF · +3' },
+    { k: 'AVAILABILITY', v: '● Accepting briefs', tone: 'ok' },
+  ],
+  secondary: [
+    { k: 'FOCUS', v: 'Localization · Ops · RAG' },
+    { k: 'STACK', v: 'n8n · Python · OpenAI' },
+    { k: 'LEAD TIME', v: '1-wk sprint cycle' },
+  ],
+};
+
 window.CONTACT = [
   { k: 'Email',     v: 'r4v3n.lmb@gmail.com',                   href: 'mailto:r4v3n.lmb@gmail.com',              copy: 'r4v3n.lmb@gmail.com' },
   { k: 'Phone',     v: '+27 72 237 5833',                       href: 'tel:+27722375833',                        copy: '+27 72 237 5833' },

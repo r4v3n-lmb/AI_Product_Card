@@ -13,9 +13,12 @@ function TopBar() {
     <div className="topbar">
       <div className="left">
         <span><span className="pulse"></span>SYSTEMS ONLINE</span>
-        <span className="faint">LAT −33.92 · LNG 18.42</span>
+        <span className="faint coord">LAT −33.92 · LNG 18.42</span>
       </div>
-      <div className="center up">R. LOMBARD · SOLUTIONS ARCHITECT</div>
+      <div className="center up">
+        <span>R. LOMBARD · SOLUTIONS ARCHITECT</span>
+        <span className="faint mobile-coord">LAT −33.92 · LNG 18.42</span>
+      </div>
       <div className="right">
         <span className="faint">{stamp}</span>
         <span>REV 04.26</span>

@@ -52,6 +52,12 @@ function ChatFloater() {
   const [input, setInput] = useState('');
   const [thinking, setThinking] = useState(false);
   const bodyRef = useRef(null);
+  const presetReplies = {
+    'What do you build?': 'I build autonomous ops systems: AI intake, dispatch, retention flows, ordering bots, and localization pipelines using n8n, Python, RAG, and API integrations.',
+    'Pricing?': 'Pricing scales with scope, integrations, and reliability requirements. Typical work starts with a focused sprint, then expands to managed rollout. Book a diagnostic at calendly.com/techmate-sa.',
+    'How fast can you ship?': 'Most projects start with a 1-week sprint for architecture and first live flow. Production-ready rollouts usually take 2-6 weeks depending on integrations and edge cases.',
+    'Show me a repo': 'You can review build style and architecture patterns on GitHub: github.com/r4v3n-lmb. If you want, I can point you to the closest project pattern for your use case.',
+  };
 
   useEffect(() => {
     const handler = () => setOpen(true);
@@ -63,20 +69,54 @@ function ChatFloater() {
     if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
   }, [msgs, thinking]);
 
+  const getBotReply = async (sys, q) => {
+    if (window.claude?.complete) {
+      const reply = await window.claude.complete({
+        messages: [{ role: 'user', content: `${sys}\n\nUser: ${q}` }]
+      });
+      return String(reply ?? '').trim();
+    }
+
+    if (window.AI_INTAKE_ENDPOINT) {
+      const res = await fetch(window.AI_INTAKE_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ system: sys, message: q }),
+      });
+      if (!res.ok) throw new Error(`endpoint_${res.status}`);
+      const data = await res.json();
+      return String(data.reply ?? data.message ?? '').trim();
+    }
+
+    throw new Error('ai_client_not_configured');
+  };
+
   const send = async (txt) => {
     const q = (txt ?? input).trim();
     if (!q) return;
     setInput('');
     setMsgs(prev => [...prev, { r: 'user', t: q }]);
+
+    if (presetReplies[q]) {
+      setThinking(true);
+      setTimeout(() => {
+        setMsgs(prev => [...prev, { r: 'bot', t: presetReplies[q] }]);
+        setThinking(false);
+      }, 450);
+      return;
+    }
+
     setThinking(true);
     try {
       const sys = `You are Revan Lombard's intake agent on his portfolio site. Revan is an AI Solutions Architect based in Cape Town, ZA. He builds autonomous systems (n8n, Python, OpenAI, RAG, Twilio, WhatsApp APIs) for SMBs — dispatch, salon retention, restaurant ordering, abandoned-cart recovery, real-estate localization. Keep replies concise (under 60 words), direct, confident, slightly technical. If asked about pricing, say it scales with scope and invite them to book at calendly.com/techmate-sa. If asked for contact, give email r4v3n.lmb@gmail.com. Never make up client names.`;
-      const reply = await window.claude.complete({
-        messages: [{ role: 'user', content: `${sys}\n\nUser: ${q}` }]
-      });
+      const reply = await getBotReply(sys, q);
       setMsgs(prev => [...prev, { r: 'bot', t: reply.trim() }]);
     } catch (e) {
-      setMsgs(prev => [...prev, { r: 'bot', t: 'Connection hiccup — try calendly.com/techmate-sa to reach Revan directly.' }]);
+      const msg =
+        e?.message === 'ai_client_not_configured'
+          ? 'AI agent is offline: no AI client is configured on this page. Add window.claude or set window.AI_INTAKE_ENDPOINT. Reach Revan at calendly.com/techmate-sa.'
+          : 'AI connection hiccup — try again, or reach Revan at calendly.com/techmate-sa.';
+      setMsgs(prev => [...prev, { r: 'bot', t: msg }]);
     } finally {
       setThinking(false);
     }

@@ -77,6 +77,7 @@ button { font-family: inherit; font-size: inherit; color: inherit; background: n
 .topbar .left, .topbar .right { display: flex; gap: 20px; align-items: center; }
 .topbar .right { justify-content: flex-end; }
 .topbar .center { font-weight: 500; letter-spacing: 0.2em; }
+.topbar .mobile-coord { display: none; }
 .pulse { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 0 0 rgba(132,199,148,0.6); animation: pulse 2s infinite; margin-right: 6px; vertical-align: middle; }
 @keyframes pulse {
   0% { box-shadow: 0 0 0 0 rgba(132,199,148,0.6); }
@@ -417,6 +418,35 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 
 /* responsive */
 @media (max-width: 900px) {
+  .topbar {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+  .topbar .center {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+  }
+  .topbar .left {
+    gap: 10px;
+    font-size: 10px;
+  }
+  .topbar .right {
+    justify-content: flex-start;
+    gap: 10px;
+    font-size: 10px;
+  }
+  .topbar .left .coord {
+    display: none;
+  }
+  .topbar .mobile-coord {
+    display: inline;
+    letter-spacing: 0.1em;
+  }
   .hero-wrap, .split, .catalog, .philosophy, .proof-grid, .contact { grid-template-columns: 1fr; }
   .card:nth-child(2n) { border-right: 1px solid var(--line-2); }
   .card { border-right: 0; }

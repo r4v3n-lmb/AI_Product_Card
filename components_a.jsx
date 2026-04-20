@@ -44,7 +44,7 @@ function Hero() {
           <div className="eyebrow">AI Solutions Architect · Automation Systems · Cape Town, ZA</div>
           <h1 className="serif">
             Digital <span className="underline">Nervous&nbsp;Systems</span>
-            <br /><em>for real businesses.</em>
+            <br /><em>for real&nbsp;businesses.</em>
           </h1>
           <p className="sub">
             I design, build, and deploy <strong>autonomous workflows</strong> that replace manual admin with

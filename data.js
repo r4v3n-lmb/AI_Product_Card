@@ -100,24 +100,25 @@ window.CATALOG = [
 
 window.METRICS = {
   kpis: [
-    { label: 'AVG RESPONSE',   value: '420',   unit: 'ms' },
-    { label: 'UPTIME 30D',     value: '99.94', unit: '%'  },
-    { label: 'LIVE WORKFLOWS', value: '18',    unit: ''   },
-    { label: 'HRS SAVED / MO', value: '847',   unit: 'hr' },
+    { label: 'USING AI IN OPERATIONS',   value: '72',   unit: '%' },
+    { label: 'ANNUAL AI VALUE POTENTIAL', value: '$4.4', unit: 'T' },
+    { label: 'FASTER TASK COMPLETION',    value: '56',   unit: '%' },
+    { label: 'SERVICE COST REDUCTION',    value: '40',   unit: '%' },
   ],
   outcomes: [
-    { label: 'Order Accuracy',        value: 95 },
-    { label: 'AI Response Coverage',  value: 88 },
-    { label: 'Queries Auto-Resolved', value: 82 },
-    { label: 'Unqualified Calls Cut', value: 70 },
-    { label: 'Rebook Rate Lift',      value: 38 },
+    { label: 'Enterprise Adoption',   short: 'Adoption',    value: 72 },
+    { label: 'Work Automatable',      short: 'Automatable', value: 57 },
+    { label: 'Query Self-Service',    short: 'Self-Service', value: 70 },
+    { label: 'Task Speed Gain',       short: 'Speed Gain',  value: 56 },
+    { label: 'Cost Reduction',        short: 'Cost Cut',    value: 40 },
   ],
+  // % of organisations using AI in at least one business function — McKinsey State of AI annual survey
   volume: [
-    { month: 'May', v: 248  }, { month: 'Jun', v: 312  }, { month: 'Jul', v: 289  },
-    { month: 'Aug', v: 445  }, { month: 'Sep', v: 523  }, { month: 'Oct', v: 612  },
-    { month: 'Nov', v: 748  }, { month: 'Dec', v: 891  }, { month: 'Jan', v: 1024 },
-    { month: 'Feb', v: 1186 }, { month: 'Mar', v: 1348 }, { month: 'Apr', v: 1567 },
+    { month: '2017', v: 20 }, { month: '2018', v: 25 }, { month: '2019', v: 32 },
+    { month: '2020', v: 35 }, { month: '2021', v: 46 }, { month: '2022', v: 50 },
+    { month: '2023', v: 55 }, { month: '2024', v: 72 },
   ],
+  source: 'McKinsey "State of AI" Annual Survey 2017–2024 · GitHub / Microsoft Research 2024',
 };
 
 window.TERMINAL_SCRIPT = [
@@ -188,24 +189,26 @@ window.PROFILE = {
 };
 
 window.AI_IMPACT = {
+  // McKinsey State of AI 2024 · Stanford AI Index 2025 · Forrester State of GenAI 2024
   adoption: [
-    { sector: 'Financial Svcs', pct: 77 },
-    { sector: 'Technology',     pct: 74 },
-    { sector: 'Retail',         pct: 62 },
-    { sector: 'Healthcare',     pct: 58 },
-    { sector: 'Manufacturing',  pct: 55 },
-    { sector: 'Logistics',      pct: 52 },
-    { sector: 'Hospitality',    pct: 41 },
+    { sector: 'Technology',     pct: 78 },
+    { sector: 'Manufacturing',  pct: 77 },
+    { sector: 'Financial Svcs', pct: 69 },
+    { sector: 'Government',     pct: 60 },
+    { sector: 'Healthcare',     pct: 53 },
+    { sector: 'Retail',         pct: 45 },
+    { sector: 'Energy',         pct: 41 },
     { sector: 'Legal / Prof.',  pct: 38 },
   ],
+  // McKinsey 2025 · GitHub/Microsoft Research 2024 · Gartner · IBM IBV 2024
   impact: [
-    { label: 'Manual Hours Saved',   pct: 82, tag: 'workflow automation'       },
-    { label: 'Error Rate Reduction', pct: 74, tag: 'process AI'                },
-    { label: 'Response Time Cut',    pct: 68, tag: 'customer-facing agents'    },
-    { label: 'Cost Per Transaction', pct: 61, tag: 'vs. manual baseline'       },
-    { label: 'Lead Conversion Lift', pct: 34, tag: 'AI-qualified pipelines'    },
+    { label: 'Work Hours Automatable',    pct: 57, tag: 'of all work hours — McKinsey 2025'       },
+    { label: 'Faster Task Completion',    pct: 56, tag: 'AI-augmented workers — GitHub/MSFT 2024' },
+    { label: 'Query Self-Service',        pct: 70, tag: 'without human escalation — Gartner'      },
+    { label: 'Service Cost Reduction',    pct: 40, tag: 'customer-facing ops — McKinsey'          },
+    { label: 'Report Productivity Gains', pct: 66, tag: 'of orgs deploying AI — IBM IBV 2024'     },
   ],
-  source: 'McKinsey · Gartner · IBM Institute · 2024–25',
+  source: 'McKinsey "State of AI" 2024–25 · GitHub / Microsoft Research · Gartner · IBM IBV · Stanford HAI · Forrester',
 };
 
 window.CONTACT = [

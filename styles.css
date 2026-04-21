@@ -569,6 +569,13 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
   border-bottom: 1px solid var(--line-2);
 }
 
+/* --- Metrics chart source footnote --- */
+.metrics-chart-source {
+  padding: 8px 28px; font-size: 8px; color: var(--ink-faint);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  border: 1px solid var(--line-2); border-top: 0;
+}
+
 /* responsive */
 @media (max-width: 900px) {
   .topbar {

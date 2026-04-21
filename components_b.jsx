@@ -225,7 +225,6 @@ function RadarChart({ data, visible }) {
     .map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
   const dataPts = data.map((d, i) => pt(i, d.value / 100));
   const dataPoly = dataPts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
-  const short = ['Order Acc.', 'AI Coverage', 'Auto-Resolved', 'Calls Filtered', 'Rebook Lift'];
   return (
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
       {rings.map((f, ri) => (
@@ -256,7 +255,7 @@ function RadarChart({ data, visible }) {
             onMouseLeave={() => setHovIdx(null)} />
         ))}
       </g>
-      {data.map((_, i) => {
+      {data.map((d, i) => {
         const [lx, ly] = pt(i, 1.3);
         const anchor = lx > cx + 15 ? 'start' : lx < cx - 15 ? 'end' : 'middle';
         return (
@@ -264,7 +263,7 @@ function RadarChart({ data, visible }) {
             fill={hovIdx === i ? 'var(--ink)' : 'var(--ink-dim)'}
             fontSize="8.5" fontFamily="JetBrains Mono, monospace"
             style={{ transition: 'fill 0.15s' }}>
-            {short[i]}
+            {d.short || d.label}
           </text>
         );
       })}
@@ -277,7 +276,7 @@ function RadarChart({ data, visible }) {
           </text>
           <text x={cx} y={cy + 13} textAnchor="middle" fill="var(--ink-faint)"
             fontSize="7.5" fontFamily="JetBrains Mono, monospace">
-            {short[hovIdx]}
+            {data[hovIdx].short || data[hovIdx].label}
           </text>
         </g>
       )}
@@ -285,21 +284,23 @@ function RadarChart({ data, visible }) {
   );
 }
 
-function VolumeChart({ data }) {
+function VolumeChart({ data, ceil = 1600, pct = false }) {
   const [hovIdx, setHovIdx] = useState(null);
   const svgRef = useRef(null);
   const W = 480, H = 190;
   const pad = { t: 20, r: 20, b: 34, l: 44 };
   const pw = W - pad.l - pad.r;
   const ph = H - pad.t - pad.b;
-  const CEIL = 1600;
+  const CEIL = ceil;
   const x = i => pad.l + (i / (data.length - 1)) * pw;
   const y = v => pad.t + ph - (v / CEIL) * ph;
   const pts = data.map((d, i) => [x(i), y(d.v)]);
   const line = pts.map(([px, py], i) => `${i === 0 ? 'M' : 'L'}${px.toFixed(1)},${py.toFixed(1)}`).join(' ');
   const area = `${line} L${x(data.length - 1).toFixed(1)},${(pad.t + ph).toFixed(1)} L${pad.l.toFixed(1)},${(pad.t + ph).toFixed(1)} Z`;
-  const gridVals = [0, 400, 800, 1200, 1600];
-  const xIdx = [0, 3, 6, 9, 11];
+  const gridVals = pct ? [0, 20, 40, 60, 80] : [0, 400, 800, 1200, 1600];
+  const xIdx = data.length <= 9 ? data.map((_, i) => i) : [0, 3, 6, 9, 11];
+  const fmtY   = v => v === 0 ? '0' : pct ? `${v}%` : `${v / 1000}k`;
+  const fmtTip = v => pct ? `${v}%` : v >= 1000 ? `${(v / 1000).toFixed(2)}k` : String(v);
 
   const handleMouseMove = (e) => {
     if (!svgRef.current) return;
@@ -326,7 +327,7 @@ function VolumeChart({ data }) {
           <line x1={pad.l} x2={W - pad.r} y1={y(v)} y2={y(v)} stroke="var(--line)" strokeWidth="1" />
           <text x={pad.l - 5} y={y(v) + 4} fill="var(--ink-faint)" fontSize="8.5"
             textAnchor="end" fontFamily="JetBrains Mono, monospace">
-            {v === 0 ? '0' : `${v / 1000}k`}
+            {fmtY(v)}
           </text>
         </g>
       ))}
@@ -356,7 +357,7 @@ function VolumeChart({ data }) {
           </text>
           <text x={tx + TW / 2} y={ty + 23} fill="var(--blueprint)" fontSize="9.5"
             textAnchor="middle" fontFamily="JetBrains Mono, monospace">
-            {data[hovIdx].v >= 1000 ? `${(data[hovIdx].v / 1000).toFixed(2)}k` : data[hovIdx].v}
+            {fmtTip(data[hovIdx].v)}
           </text>
         </g>
       )}
@@ -507,19 +508,20 @@ function MetricsDash() {
       <div className="kpi-row">
         {m.kpis.map((k, i) => <KpiCard key={i} {...k} />)}
       </div>
-      <div className="metrics-section-label"><span>MY SYSTEMS · LIVE METRICS</span></div>
+      <div className="metrics-section-label"><span>AI INDUSTRY · KEY INDICATORS 2024</span></div>
       <div className="metrics-charts">
         <div className="chart-panel">
-          <div className="chart-label" style={{paddingBottom:4, marginBottom:0, borderBottom:0}}>BUILD OUTCOMES · CAPABILITY RADAR</div>
-          <div className="chart-note">actual results across deployed systems</div>
+          <div className="chart-label" style={{paddingBottom:4, marginBottom:0, borderBottom:0}}>AI PERFORMANCE · FIVE-DIMENSION INDEX</div>
+          <div className="chart-note">enterprise averages — hover to inspect</div>
           <RadarChart data={m.outcomes} visible={visible} />
         </div>
         <div className="chart-panel">
-          <div className="chart-label">WORKFLOW EXECUTION · 12-MONTH VOLUME</div>
-          <VolumeChart data={m.volume} />
+          <div className="chart-label">AI ADOPTION GROWTH · % ORGS 2017–2024</div>
+          <VolumeChart data={m.volume} ceil={80} pct={true} />
         </div>
       </div>
-      <div className="metrics-section-label"><span>INDUSTRY BENCHMARKS · 2024–25</span></div>
+      {m.source && <div className="metrics-chart-source">Source: {m.source}</div>}
+      <div className="metrics-section-label"><span>SECTOR &amp; IMPACT BENCHMARKS · 2024–25</span></div>
       <AIImpactPanel />
     </div>
   );

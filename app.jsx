@@ -6,12 +6,6 @@ function Contact() {
   const bookUrl = bookContact?.href
     || (bookContact?.v ? `https://${String(bookContact.v).replace(/^https?:\/\//, '')}` : 'https://calendly.com/techmate-sa');
 
-  const [copied, setCopied] = useState(null);
-  const copy = (k, v) => {
-    navigator.clipboard?.writeText(v);
-    setCopied(k);
-    setTimeout(() => setCopied(null), 1400);
-  };
   return (
     <section className="contact" id="contact">
       <div>
@@ -37,9 +31,7 @@ function Contact() {
           <div key={c.k} className="contact-row">
             <span className="k">{c.k}</span>
             <a className="v" href={c.href} target="_blank" rel="noreferrer">{c.v}</a>
-            <button className={`copy ${copied===c.k?'copied':''}`} onClick={() => copy(c.k, c.copy)}>
-              {copied===c.k ? 'Copied' : 'Copy'}
-            </button>
+            <a className="copy" href={c.href} target="_blank" rel="noreferrer">Open →</a>
           </div>
         ))}
       </div>

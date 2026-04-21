@@ -8,7 +8,7 @@ window.STACK = [
   { cat: '06 · Observability', lbl: 'Dashboards', desc: 'Management dashboards with live run-logs, retry queues, alerting.', reveal: 'Grafana · Custom UIs' },
 ];
 
-// Elite 10 catalog
+// Build catalog
 window.CATALOG = [
   {
     id: 'dispatch', idx: 'E-01', sector: 'Logistics',
@@ -32,38 +32,6 @@ window.CATALOG = [
   J --> K[Owner Dashboard]`,
   },
   {
-    id: 'hvac', idx: 'E-02', sector: 'Logistics',
-    title: 'HVAC / Plumber Emergency Triage',
-    problem: 'Tradespeople answer everything or nothing — high-value emergency jobs get lost in the noise.',
-    solution: 'Triage classifier scores urgency, books premium emergency slots, routes non-urgent to morning queue.',
-    stat: '3.2x', unit: '', statLbl: 'ticket avg uplift',
-    tech: ['OpenAI','n8n','Google Cal','Twilio'],
-    mermaid: `flowchart LR
-  A[Inbound Call] --> B[AI Triage]
-  B --> C{Urgency Score}
-  C -->|9-10| D[Premium Slot]
-  C -->|5-8| E[Same Day]
-  C -->|1-4| F[Next Morning]
-  D --> G[SMS Confirm]
-  E --> G
-  F --> G`,
-  },
-  {
-    id: 'airbnb', idx: 'E-03', sector: 'Logistics',
-    title: 'Airbnb Concierge & Ops Bot',
-    problem: 'Property managers drown in repeat guest questions and miss cleaning-crew handoffs between stays.',
-    solution: 'WhatsApp bot handles check-in, FAQ, and auto-triggers Slack to cleaning crew the minute a guest checks out.',
-    stat: '82', unit: '%', statLbl: 'queries auto-resolved',
-    tech: ['WhatsApp API','RAG','Slack','n8n'],
-    mermaid: `flowchart LR
-  A[Guest WhatsApp] --> B[RAG Agent]
-  B --> C{Intent}
-  C -->|FAQ| D[Auto Reply]
-  C -->|Checkout| E[Trigger Slack]
-  C -->|Issue| F[Escalate Host]
-  E --> G[Cleaning Crew]`,
-  },
-  {
     id: 'salon', idx: 'E-04', sector: 'Retention',
     title: 'Salon / MedSpa Retention Engine',
     problem: 'Clients forget to re-book; salons leave 40% of LTV on the table across fades, colour, and touch-ups.',
@@ -78,22 +46,6 @@ window.CATALOG = [
   C -->|Facial: 4wk| D
   D --> E[Rebook Link]
   E --> F[Calendar Hold]`,
-  },
-  {
-    id: 'gym', idx: 'E-05', sector: 'Retention',
-    title: 'Gym / PT Accountability Bot',
-    problem: 'Clients ghost between sessions; trainers have no lightweight way to nudge without feeling pushy.',
-    solution: 'Behavioural nudge agent sends check-ins after missed sessions with tailored home-workout links.',
-    stat: '2.1x', unit: '', statLbl: 'retention vs control',
-    tech: ['OpenAI','Supabase','n8n','SMS'],
-    mermaid: `flowchart LR
-  A[Session Missed] --> B{Streak Check}
-  B -->|First Miss| C[Soft Nudge]
-  B -->|2nd Miss| D[Video Link]
-  B -->|3rd Miss| E[PT Alerted]
-  C --> F[Log Response]
-  D --> F
-  E --> F`,
   },
   {
     id: 'pizza', idx: 'E-06', sector: 'Volume',
@@ -111,21 +63,6 @@ window.CATALOG = [
   E --> F
   F --> G[POS Push]
   G --> H[Kitchen Printer]`,
-  },
-  {
-    id: 'cart', idx: 'E-07', sector: 'Volume',
-    title: 'Abandoned Cart Recovery',
-    problem: 'Generic "you left something behind" emails convert at 1-2%; every abandoned cart is lost margin.',
-    solution: 'AI-generated voice-note via WhatsApp with a 60-minute dynamic discount keyed to cart value.',
-    stat: '18', unit: '%', statLbl: 'recovery rate',
-    tech: ['Shopify','ElevenLabs','WhatsApp','n8n'],
-    mermaid: `flowchart LR
-  A[Cart Abandoned] --> B[Wait 45m]
-  B --> C[Generate Voice]
-  C --> D[WhatsApp Send]
-  D --> E{Opens?}
-  E -->|Yes| F[Discount Code]
-  E -->|No| G[Final SMS +1d]`,
   },
   {
     id: 'lawyer', idx: 'E-08', sector: 'High-Ticket',
@@ -158,33 +95,8 @@ window.CATALOG = [
   C --> G[FR: heritage first]
   C --> H[ES: lifestyle first]`,
   },
-  {
-    id: 'content', idx: 'E-10', sector: 'High-Ticket',
-    title: 'Content Repurposing Lab',
-    problem: 'A 60-min podcast or Loom takes 5+ hours to cut, caption, and schedule across platforms.',
-    solution: 'Upload 1 long video → AI extracts 5 vertical clips, writes captions per platform, schedules on-brand.',
-    stat: '5x', unit: '', statLbl: 'assets per upload',
-    tech: ['Whisper','OpenAI','ffmpeg','n8n'],
-    mermaid: `flowchart LR
-  A[Long Video] --> B[Transcribe]
-  B --> C[Highlight Scorer]
-  C --> D[Cut 5 Clips]
-  D --> E[TikTok Caption]
-  D --> F[Reels Caption]
-  D --> G[Shorts Caption]
-  E --> H[Schedule]
-  F --> H
-  G --> H`,
-  },
 ];
 
-window.SECTORS = [
-  { id: 'all', lbl: 'All Systems' },
-  { id: 'Logistics', lbl: 'Logistics' },
-  { id: 'Retention', lbl: 'Retention' },
-  { id: 'Volume', lbl: 'High Volume' },
-  { id: 'High-Ticket', lbl: 'High-Ticket' },
-];
 
 window.TERMINAL_SCRIPT = [
   { t: 'prompt', s: '> whoami' },
@@ -200,7 +112,7 @@ window.TERMINAL_SCRIPT = [
   { t: 'ok',     s: '  [✓] fastapi.endpoints          OK' },
   { t: 'ok',     s: '  [✓] localization.multi_lang    OK' },
   { t: 'prompt', s: '> status --all' },
-  { t: 'tag',    s: '  systems_online ............. 10 / 10' },
+  { t: 'tag',    s: '  systems_online .............  5 / 5 ' },
   { t: 'tag',    s: '  avg_response_time .......... 420ms' },
   { t: 'tag',    s: '  uptime_30d ................. 99.94%' },
   { t: 'warn',   s: '  queue.depth ................ 3 jobs pending' },
@@ -223,7 +135,7 @@ window.PROFILE = {
   primary: [
     { k: 'NAME', v: 'Revan Lombard' },
     { k: 'HANDLE', v: '@r4v3n-lmb' },
-    { k: 'ROLE', v: 'Solutions Architect' },
+    { k: 'ROLE', v: 'AI Solutions Architect' },
     { k: 'LOCATION', v: 'Johannesburg, ZA' },
     { k: 'LANGUAGES', v: 'EN · AF' },
     { k: 'AVAILABILITY', v: '● Accepting briefs', tone: 'ok' },
@@ -238,7 +150,7 @@ window.PROFILE = {
 window.CONTACT = [
   { k: 'Email',     v: 'r4v3n.lmb@gmail.com',                   href: 'mailto:r4v3n.lmb@gmail.com',              copy: 'r4v3n.lmb@gmail.com' },
   { k: 'Phone',     v: '+27 72 237 5833',                       href: 'tel:+27722375833',                        copy: '+27 72 237 5833' },
-  { k: 'Book',      v: 'calendly.com/revan_lombard',              href: 'https://calendly.com/techmate-sa',        copy: 'https://calendly.com/techmate-sa' },
+  { k: 'Book',      v: 'calendly.com/revan_lombard',              href: 'https://calendly.com/revan_lombard',      copy: 'https://calendly.com/revan_lombard' },
   { k: 'GitHub',    v: 'github.com/r4v3n-lmb',                  href: 'https://github.com/r4v3n-lmb',            copy: 'https://github.com/r4v3n-lmb' },
   { k: 'WhatsApp',  v: 'wa.me/27722375833',                     href: 'https://wa.me/27722375833',               copy: 'https://wa.me/27722375833' },
 ];

@@ -13,11 +13,11 @@ function TopBar() {
     <div className="topbar">
       <div className="left">
         <span><span className="pulse"></span>SYSTEMS ONLINE</span>
-        <span className="faint coord">LAT −33.92 · LNG 18.42</span>
+        <span className="faint coord">LAT −26.20 · LNG 28.04</span>
       </div>
       <div className="center up">
         <span>R. LOMBARD · SOLUTIONS ARCHITECT</span>
-        <span className="faint mobile-coord">LAT −33.92 · LNG 18.42</span>
+        <span className="faint mobile-coord">LAT −26.20 · LNG 28.04</span>
       </div>
       <div className="right">
         <span className="faint">{stamp}</span>
@@ -40,12 +40,16 @@ function SectionLabel({ num, title, coord }) {
 
 /* ============ HERO ============ */
 function Hero() {
+  const bookContact = (window.CONTACT || []).find(c => String(c.k).toLowerCase() === 'book');
+  const bookUrl = bookContact?.href
+    || (bookContact?.v ? `https://${String(bookContact.v).replace(/^https?:\/\//, '')}` : 'https://calendly.com/revan_lombard');
+
   const defaultProfile = {
     primary: [
       { k: 'NAME', v: 'Revan Lombard' },
       { k: 'HANDLE', v: '@r4v3n-lmb' },
       { k: 'ROLE', v: 'Solutions Architect' },
-      { k: 'LOCATION', v: 'Cape Town, ZA' },
+      { k: 'LOCATION', v: 'Johannesburg, ZA' },
       { k: 'LANGUAGES', v: 'EN · AF · +3' },
       { k: 'AVAILABILITY', v: '● Accepting briefs', tone: 'ok' },
     ],
@@ -61,7 +65,7 @@ function Hero() {
     <section className="hero">
       <div className="hero-wrap">
         <div>
-          <div className="eyebrow">AI Solutions Architect · Automation Systems · Cape Town, ZA</div>
+          <div className="eyebrow">AI Solutions Architect · Automation Systems · Johannesburg, ZA</div>
           <h1 className="serif">
             Digital <span className="underline">Nervous&nbsp;Systems</span>
             <br /><em>for real&nbsp;businesses.</em>
@@ -75,7 +79,7 @@ function Hero() {
             <a className="btn primary" href="https://github.com/r4v3n-lmb" target="_blank" rel="noreferrer">
               View GitHub <span className="arrow">→</span>
             </a>
-            <a className="btn" href="https://calendly.com/techmate-sa" target="_blank" rel="noreferrer">
+            <a className="btn" href={bookUrl} target="_blank" rel="noreferrer">
               Book a Demo <span className="arrow">→</span>
             </a>
             <button className="btn" onClick={() => window.dispatchEvent(new Event('open-chat'))}>

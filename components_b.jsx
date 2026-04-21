@@ -45,12 +45,8 @@ function CatalogCard({ item, expanded, onToggle }) {
               </div>
             </div>
             <div className="meta-block">
-              <div className="k">Repo</div>
-              <div className="v">github.com/r4v3n-lmb/{item.id}</div>
-            </div>
-            <div className="meta-block">
-              <div className="k">Build Status</div>
-              <div className="v" style={{color:'var(--ok)'}}>● Production · v1.2</div>
+              <div className="k">GitHub</div>
+              <a className="v" href="https://github.com/r4v3n-lmb" target="_blank" rel="noreferrer">github.com/r4v3n-lmb</a>
             </div>
           </div>
         </div>
@@ -61,40 +57,19 @@ function CatalogCard({ item, expanded, onToggle }) {
 
 /* ============ ELITE 10 ============ */
 function Elite10() {
-  const [filter, setFilter] = useState('all');
   const [expanded, setExpanded] = useState(null);
 
-  const visible = filter === 'all'
-    ? window.CATALOG
-    : window.CATALOG.filter(c => c.sector === filter);
-
-  const counts = window.SECTORS.map(s => ({
-    ...s,
-    n: s.id === 'all' ? window.CATALOG.length : window.CATALOG.filter(c => c.sector === s.id).length,
-  }));
-
   return (
-    <>
-      <div className="filter-row">
-        {counts.map(s => (
-          <button key={s.id}
-            className={`chip ${filter === s.id ? 'active' : ''}`}
-            onClick={() => { setFilter(s.id); setExpanded(null); }}>
-            {s.lbl}<span className="count">{String(s.n).padStart(2,'0')}</span>
-          </button>
-        ))}
-      </div>
-      <div className="catalog">
-        {visible.map(item => (
-          <CatalogCard
-            key={item.id}
-            item={item}
-            expanded={expanded === item.id}
-            onToggle={() => setExpanded(expanded === item.id ? null : item.id)}
-          />
-        ))}
-      </div>
-    </>
+    <div className="catalog">
+      {window.CATALOG.map(item => (
+        <CatalogCard
+          key={item.id}
+          item={item}
+          expanded={expanded === item.id}
+          onToggle={() => setExpanded(expanded === item.id ? null : item.id)}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -115,13 +90,15 @@ function Philosophy() {
 
 /* ============ HEATMAP + TESTIMONIAL ============ */
 function ProofGrid() {
-  // 52 weeks * 7 days. Seeded-ish pattern biased to recent.
+  // 52 weeks * 7 days. Deterministic seeded pattern biased to recent.
   const cells = React.useMemo(() => {
+    let s = 0x9e3779b9;
+    const rng = () => { s = (Math.imul(s ^ (s >>> 16), 0x45d9f3b) ^ (s >>> 16)) >>> 0; return s / 0xffffffff; };
     const out = [];
     for (let w = 0; w < 52; w++) {
       for (let d = 0; d < 7; d++) {
         const recency = w / 51; // 0 old ... 1 recent
-        const r = Math.random();
+        const r = rng();
         let lvl = 0;
         const threshold = 0.35 + recency * 0.45;
         if (r < threshold) {

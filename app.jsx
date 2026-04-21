@@ -2,6 +2,10 @@ const { useState, useEffect, useRef } = React;
 
 /* ============ CONTACT ============ */
 function Contact() {
+  const bookContact = (window.CONTACT || []).find(c => String(c.k).toLowerCase() === 'book');
+  const bookUrl = bookContact?.href
+    || (bookContact?.v ? `https://${String(bookContact.v).replace(/^https?:\/\//, '')}` : 'https://calendly.com/techmate-sa');
+
   const [copied, setCopied] = useState(null);
   const copy = (k, v) => {
     navigator.clipboard?.writeText(v);
@@ -19,7 +23,7 @@ function Contact() {
           I respond same day. Brief me on the friction, I&apos;ll come back with an architecture sketch.
         </p>
         <div className="cta-row">
-          <a className="btn primary" href="https://calendly.com/techmate-sa" target="_blank" rel="noreferrer">
+          <a className="btn primary" href={bookUrl} target="_blank" rel="noreferrer">
             Book Diagnostic <span className="arrow">→</span>
           </a>
           <a className="btn" href="https://wa.me/27722375833" target="_blank" rel="noreferrer">
@@ -52,9 +56,13 @@ function ChatFloater() {
   const [input, setInput] = useState('');
   const [thinking, setThinking] = useState(false);
   const bodyRef = useRef(null);
+  const bookContact = (window.CONTACT || []).find(c => String(c.k).toLowerCase() === 'book');
+  const bookUrl = bookContact?.href
+    || (bookContact?.v ? `https://${String(bookContact.v).replace(/^https?:\/\//, '')}` : 'https://calendly.com/techmate-sa');
+  const bookDisplay = bookUrl.replace(/^https?:\/\//, '');
   const presetReplies = {
     'What do you build?': 'I build autonomous ops systems: AI intake, dispatch, retention flows, ordering bots, and localization pipelines using n8n, Python, RAG, and API integrations.',
-    'Pricing?': 'Pricing scales with scope, integrations, and reliability requirements. Typical work starts with a focused sprint, then expands to managed rollout. Book a diagnostic at calendly.com/techmate-sa.',
+    'Pricing?': `Pricing scales with scope, integrations, and reliability requirements. Typical work starts with a focused sprint, then expands to managed rollout. Book a diagnostic at ${bookDisplay}.`,
     'How fast can you ship?': 'Most projects start with a 1-week sprint for architecture and first live flow. Production-ready rollouts usually take 2-6 weeks depending on integrations and edge cases.',
     'Show me a repo': 'You can review build style and architecture patterns on GitHub: github.com/r4v3n-lmb. If you want, I can point you to the closest project pattern for your use case.',
   };
@@ -108,14 +116,14 @@ function ChatFloater() {
 
     setThinking(true);
     try {
-      const sys = `You are Revan Lombard's intake agent on his portfolio site. Revan is an AI Solutions Architect based in Cape Town, ZA. He builds autonomous systems (n8n, Python, OpenAI, RAG, Twilio, WhatsApp APIs) for SMBs — dispatch, salon retention, restaurant ordering, abandoned-cart recovery, real-estate localization. Keep replies concise (under 60 words), direct, confident, slightly technical. If asked about pricing, say it scales with scope and invite them to book at calendly.com/techmate-sa. If asked for contact, give email r4v3n.lmb@gmail.com. Never make up client names.`;
+      const sys = `You are Revan Lombard's intake agent on his portfolio site. Revan is an AI Solutions Architect based in Johannesburg, ZA. He builds autonomous systems (n8n, Python, OpenAI, RAG, Twilio, WhatsApp APIs) for SMBs — dispatch & fleet routing, salon retention, restaurant ordering, legal lead qualification, real-estate localization. Keep replies concise (under 60 words), direct, confident, slightly technical. If asked about pricing, say it scales with scope and invite them to book at ${bookDisplay}. If asked for contact, give email r4v3n.lmb@gmail.com. Never make up client names.`;
       const reply = await getBotReply(sys, q);
       setMsgs(prev => [...prev, { r: 'bot', t: reply.trim() }]);
     } catch (e) {
       const msg =
         e?.message === 'ai_client_not_configured'
-          ? 'AI agent is offline: no AI client is configured on this page. Add window.claude or set window.AI_INTAKE_ENDPOINT. Reach Revan at calendly.com/techmate-sa.'
-          : 'AI connection hiccup — try again, or reach Revan at calendly.com/techmate-sa.';
+          ? `AI agent is offline: no AI client is configured on this page. Add window.claude or set window.AI_INTAKE_ENDPOINT. Reach Revan at ${bookDisplay}.`
+          : `AI connection hiccup — try again, or reach Revan at ${bookDisplay}.`;
       setMsgs(prev => [...prev, { r: 'bot', t: msg }]);
     } finally {
       setThinking(false);
@@ -195,8 +203,8 @@ function App() {
         </div>
       </section>
 
-      <section data-screen-label="03 Elite 10">
-        <SectionLabel num="03" title="The Elite 10 · Build Catalog" coord="E-01 / J-12" />
+      <section data-screen-label="03 Build Catalog">
+        <SectionLabel num="03" title="Build Catalog" coord="E-01 / J-12" />
         <Elite10 />
       </section>
 

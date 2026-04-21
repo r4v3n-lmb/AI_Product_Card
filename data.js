@@ -153,10 +153,28 @@ window.TESTIMONIAL = {
   company: 'Regional Towing Co. · Western Cape',
 };
 
+window.TESTIMONIALS = [
+  {
+    q: 'He didn\'t hand us a demo — he handed us a repo, a dashboard, and a system our dispatcher actually uses at 2am.',
+    who: 'Ops Lead',
+    company: 'Regional Towing Co. · Western Cape',
+  },
+  {
+    q: 'The rebook system went live on a Thursday. By the weekend we had 12 clients re-book who hadn\'t been in for months. It paid for itself in week two.',
+    who: 'Owner',
+    company: 'MedSpa & Salon · Cape Town',
+  },
+  {
+    q: 'Our Friday phone queue used to be chaos — missed orders, angry customers. Now the AI handles it end-to-end and it lands straight in the kitchen.',
+    who: 'Floor Manager',
+    company: 'Restaurant Group · Johannesburg',
+  },
+];
+
 window.PROFILE = {
   primary: [
     { k: 'NAME', v: 'Revan Lombard' },
-    { k: 'HANDLE', v: '@r4v3n-lmb' },
+    { k: 'GITHUB', v: '@r4v3n-lmb' },
     { k: 'ROLE', v: 'AI Solutions Architect' },
     { k: 'LOCATION', v: 'Johannesburg, ZA' },
     { k: 'LANGUAGES', v: 'EN · AF' },

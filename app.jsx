@@ -20,7 +20,7 @@ function Contact() {
         </h2>
         <p className="dim" style={{marginTop:28, maxWidth:420, fontSize:13, lineHeight:1.7}}>
           Fastest way in: book a 20-min diagnostic on Calendly, or hit WhatsApp —
-          I respond same day. Brief me on the friction, I&apos;ll come back with an architecture sketch.
+          I respond same day. Tell me what&apos;s slowing you down, I&apos;ll come back with an architecture sketch.
         </p>
         <div className="cta-row">
           <a className="btn primary" href={bookUrl} target="_blank" rel="noreferrer">
@@ -136,7 +136,8 @@ function ChatFloater() {
       const reply = await getBotReply(sys, q);
       setMsgs(prev => [...prev, { r: 'bot', t: reply.trim() }]);
     } catch (e) {
-      setMsgs(prev => [...prev, { r: 'bot', t: `AI connection hiccup — try again, or reach Revan directly: ${fallbackContacts}.` }]);
+      const isOffline = !window.AI_INTAKE_ENDPOINT;
+      setMsgs(prev => [...prev, { r: 'bot', t: isOffline ? `Agent offline — reach Revan directly: ${fallbackContacts}.` : `Couldn't connect — try again, or reach Revan directly: ${fallbackContacts}.` }]);
     } finally {
       setThinking(false);
     }
@@ -201,9 +202,9 @@ const TOUR_STEPS = [
   { target: '.stack-grid',   title: 'CAPABILITIES · 02', pos: 'left',   body: 'Six capability layers, each with a specific production role. Hover any cell to reveal the exact tools running underneath.' },
   { target: '#s03',          title: 'BUILD CATALOG · 03',pos: 'bottom', body: 'Five production systems across Logistics, Retention, High-Volume, and High-Ticket sectors. Click any card to expand the full flow diagram and tech stack.' },
   { target: '#s04',          title: 'PHILOSOPHY · 04',   pos: 'bottom', body: 'Three non-negotiable build principles: ship repos not decks, build observable systems not chatbots, localise by default.' },
-  { target: '.metrics-dash', title: 'METRICS · 05',      pos: 'bottom', body: 'Live performance data across all deployed systems — outcome precision, AI response coverage, and 12-month execution volume, all grounded in real build stats.' },
-  { target: '.heatmap-wrap', title: 'PROOF · 06',        pos: 'right',  body: '52 weeks of commit activity. The testimonial to the right is from a live deployment — a towing dispatcher running at 2am in the Western Cape.' },
-  { target: '.contact',      title: 'ENGAGE · 07',       pos: 'top',    body: 'Fastest route in: WhatsApp or a 20-min diagnostic on Calendly. Brief me on the friction — I\'ll return with an architecture sketch, not a proposal deck.' },
+  { target: '.metrics-dash', title: 'METRICS · 06',      pos: 'bottom', body: 'Live performance data across all deployed systems — outcome precision, AI response coverage, and 12-month execution volume, all grounded in real build stats.' },
+  { target: '.heatmap-wrap', title: 'PROOF · 07',        pos: 'right',  body: '52 weeks of commit activity. The testimonials to the right are from live deployments — including a towing dispatcher running at 2am in the Western Cape.' },
+  { target: '.contact',      title: 'ENGAGE · 08',       pos: 'top',    body: 'Fastest route in: WhatsApp or a 20-min diagnostic on Calendly. Tell me what\'s slowing you down — I\'ll return with an architecture sketch, not a proposal deck.' },
   { target: '.floater',      title: 'INTAKE AGENT',      pos: 'top',    body: 'The AI agent bottom-right is live. It knows the build catalog, pricing logic, and timelines. Use it to scope your project before booking a call.' },
 ];
 
@@ -314,7 +315,7 @@ function Tour() {
 /* ============ SECTION NAV ============ */
 function SectionNav() {
   const [active, setActive] = useState('');
-  const ids = ['s02','s03','s04','s05','s06','s07'];
+  const ids = ['s02','s03','s04','s-process','s05','s06','s07'];
   useEffect(() => {
     const obs = new IntersectionObserver(
       entries => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); }),
@@ -385,18 +386,23 @@ function App() {
         <Philosophy />
       </section>
 
-      <section id="s05" className="reveal-section" data-screen-label="05 Metrics">
-        <SectionLabel num="05" title="System Metrics · Performance Intelligence" coord="K-07 / L-14" />
+      <section id="s-process" className="reveal-section" data-screen-label="05 Process">
+        <SectionLabel num="05" title="Process · How It Works" coord="K-07 / K-10" />
+        <HowItWorks />
+      </section>
+
+      <section id="s05" className="reveal-section" data-screen-label="06 Metrics">
+        <SectionLabel num="06" title="System Metrics · Performance Intelligence" coord="L-01 / L-14" />
         <MetricsDash />
       </section>
 
-      <section id="s06" className="reveal-section" data-screen-label="06 Proof">
-        <SectionLabel num="06" title="Proof of Work · Field Signal" coord="L-01 / M-10" />
+      <section id="s06" className="reveal-section" data-screen-label="07 Proof">
+        <SectionLabel num="07" title="Proof of Work · Field Signal" coord="M-01 / M-10" />
         <ProofGrid />
       </section>
 
-      <section id="s07" className="reveal-section" data-screen-label="07 Contact">
-        <SectionLabel num="07" title="Engagement · Direct Channels" coord="N-01 / N-08" />
+      <section id="s07" className="reveal-section" data-screen-label="08 Contact">
+        <SectionLabel num="08" title="Engagement · Direct Channels" coord="N-01 / N-08" />
         <Contact />
       </section>
 

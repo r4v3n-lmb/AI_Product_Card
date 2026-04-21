@@ -77,15 +77,19 @@ function Hero() {
             <strong> system integrity</strong> — from single-operator SMBs to multi-branch fleets.
           </p>
           <div className="cta-row">
-            <a className="btn primary" href="https://github.com/r4v3n-lmb" target="_blank" rel="noreferrer">
-              View GitHub <span className="arrow">→</span>
-            </a>
-            <a className="btn" href={bookUrl} target="_blank" rel="noreferrer">
+            <a className="btn primary" href={bookUrl} target="_blank" rel="noreferrer">
               Book a Demo <span className="arrow">→</span>
+            </a>
+            <a className="btn" href="https://github.com/r4v3n-lmb" target="_blank" rel="noreferrer">
+              View GitHub <span className="arrow">→</span>
             </a>
             <button className="btn" onClick={() => window.dispatchEvent(new Event('open-chat'))}>
               Talk to the AI <span className="arrow">→</span>
             </button>
+          </div>
+          <div className="hero-avail">
+            <span className="pulse"></span>
+            <span>Available for new projects &nbsp;·&nbsp; 2-week sprint cycle</span>
           </div>
         </div>
         <div className="hero-aside">

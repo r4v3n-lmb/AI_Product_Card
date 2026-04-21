@@ -57,7 +57,7 @@ function CatalogCard({ item, expanded, onToggle }) {
 
 /* ============ ELITE 10 ============ */
 function Elite10() {
-  const [expanded, setExpanded] = useState(null);
+  const [expanded, setExpanded] = useState(() => window.CATALOG?.[0]?.id ?? null);
 
   return (
     <div className="catalog">
@@ -118,6 +118,12 @@ function ProofGrid() {
 
   const total = cells.reduce((a, b) => a + b, 0) * 2 + 180;
   const streak = 47;
+  const testimonials = window.TESTIMONIALS || [window.TESTIMONIAL].filter(Boolean);
+
+  const now = new Date();
+  const startD = new Date(now);
+  startD.setDate(startD.getDate() - 52 * 7);
+  const fmtDate = d => d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
 
   return (
     <div className="proof-grid">
@@ -136,7 +142,7 @@ function ProofGrid() {
           {cells.map((l, i) => <div key={i} className="hcell" data-l={l}></div>)}
         </div>
         <div className="heatmap-footer">
-          <span>Apr 2025</span>
+          <span>{fmtDate(startD)}</span>
           <div className="heatmap-legend">
             <span className="faint">less</span>
             <div className="hcell" data-l="0"></div>
@@ -146,15 +152,19 @@ function ProofGrid() {
             <div className="hcell" data-l="4"></div>
             <span className="faint">more</span>
           </div>
-          <span>Apr 2026</span>
+          <span>{fmtDate(now)}</span>
         </div>
       </div>
-      <div className="testimonial">
-        <blockquote className="serif">{window.TESTIMONIAL.q}</blockquote>
-        <div className="attr">
-          <span>— {window.TESTIMONIAL.who}</span>
-          <span className="faint">{window.TESTIMONIAL.company}</span>
-        </div>
+      <div className="testimonial-stack">
+        {testimonials.map((t, i) => (
+          <div key={i} className="testimonial">
+            <blockquote className="serif">{t.q}</blockquote>
+            <div className="attr">
+              <span>— {t.who}</span>
+              <span className="faint">{t.company}</span>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -468,7 +478,8 @@ function MetricsDash() {
       <div className="metrics-section-label"><span>MY SYSTEMS · LIVE METRICS</span></div>
       <div className="metrics-charts">
         <div className="chart-panel">
-          <div className="chart-label">BUILD OUTCOMES · CAPABILITY RADAR</div>
+          <div className="chart-label" style={{paddingBottom:4, marginBottom:0, borderBottom:0}}>BUILD OUTCOMES · CAPABILITY RADAR</div>
+          <div className="chart-note">actual results across deployed systems</div>
           <RadarChart data={m.outcomes} visible={visible} />
         </div>
         <div className="chart-panel">
@@ -482,4 +493,36 @@ function MetricsDash() {
   );
 }
 
-Object.assign(window, { CatalogCard, Elite10, Philosophy, ProofGrid, MermaidDiagram, MetricsDash });
+/* ============ HOW IT WORKS ============ */
+function HowItWorks() {
+  const steps = [
+    {
+      num: '01',
+      title: 'Brief',
+      body: 'Book a 20-min call or drop a WhatsApp. Tell me what\'s broken, slow, or manual. I\'ll ask the right questions and come back with an architecture sketch — not a proposal deck.',
+    },
+    {
+      num: '02',
+      title: 'Build',
+      body: 'Once aligned, we sprint. First live flow ships in week one. Every step is version-controlled so you can see exactly what\'s running and why.',
+    },
+    {
+      num: '03',
+      title: 'Ship',
+      body: 'Production-ready system with error handling, retry queues, and a management dashboard. Documented, version-controlled, and genuinely yours to own.',
+    },
+  ];
+  return (
+    <div className="how-it-works">
+      {steps.map(s => (
+        <div key={s.num} className="how-cell">
+          <div className="how-num serif">{s.num}</div>
+          <h4 className="how-title serif">{s.title}</h4>
+          <p className="how-body">{s.body}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+Object.assign(window, { CatalogCard, Elite10, Philosophy, ProofGrid, MermaidDiagram, MetricsDash, HowItWorks });

@@ -337,6 +337,38 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 .ghost-stat { color: var(--ink-faint) !important; }
 .ghost-cta { color: var(--blueprint) !important; }
 .card.ghost:hover .ghost-cta { color: var(--accent) !important; }
+.card.ghost.expanded { background: #151a21; cursor: default; }
+.card.ghost.expanded::after { display: none; }
+
+/* Ghost card expansion */
+.ghost-expansion { display: grid; grid-template-columns: 1fr 1fr; }
+.ghost-dash { border: 1px solid var(--line-2); background: #07090b; }
+.ghost-dash-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line-2); font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em; color: var(--ink-dim); text-transform: uppercase; }
+.ghost-dash-stats { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line-2); }
+.ghost-dash-stat { padding: 10px 14px; border-right: 1px solid var(--line-2); }
+.ghost-dash-stat:last-child { border-right: 0; }
+.ghost-dash-stat-val { font-family: 'Inter Tight'; font-size: 16px; color: var(--blueprint); letter-spacing: -0.02em; margin-bottom: 3px; }
+.ghost-dash-stat-val.ok { color: var(--ok); }
+.ghost-dash-stat-k { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--ink-faint); letter-spacing: 0.14em; text-transform: uppercase; }
+.ghost-dash-log-head { padding: 10px 14px 4px; font-family: 'JetBrains Mono', monospace; font-size: 8px; letter-spacing: 0.2em; color: var(--ink-faint); text-transform: uppercase; }
+.ghost-dash-log { padding: 4px 14px 14px; display: flex; flex-direction: column; gap: 3px; }
+.ghost-log-row { display: grid; grid-template-columns: 14px 40px 1fr 40px; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-dim); align-items: center; padding: 2px 0; }
+.ghost-log-icon.ok { color: var(--ok); }
+.ghost-log-icon.warn { color: var(--warn); }
+.ghost-log-row.warn .ghost-log-dur { color: var(--warn); }
+.ghost-log-time { color: var(--ink-faint); }
+.ghost-log-dur { text-align: right; color: var(--ink-faint); }
+.ghost-repo { border: 1px solid var(--line-2); border-left: 0; background: var(--bg-2); display: flex; flex-direction: column; }
+.ghost-repo-head { padding: 10px 16px; border-bottom: 1px solid var(--line-2); font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.2em; color: var(--ink-faint); text-transform: uppercase; }
+.ghost-tree { padding: 12px 16px; border-bottom: 1px solid var(--line-2); }
+.ghost-tree-row { display: flex; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; line-height: 1.85; }
+.ghost-tree-pre { color: var(--line-3); white-space: pre; }
+.ghost-tree-name { color: var(--ink-dim); }
+.ghost-tree-name.dir { color: var(--blueprint); }
+.ghost-owns { padding: 12px 16px; border-bottom: 1px solid var(--line-2); display: flex; flex-direction: column; gap: 7px; flex: 1; }
+.ghost-own-row { display: flex; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ink-dim); line-height: 1.4; }
+.ghost-own-check { color: var(--ok); flex-shrink: 0; }
+.ghost-repo-cta { padding: 14px 16px; }
 
 /* --- Philosophy --- */
 .philosophy {

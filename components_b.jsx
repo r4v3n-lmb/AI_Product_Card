@@ -55,12 +55,107 @@ function CatalogCard({ item, expanded, onToggle }) {
   );
 }
 
+/* ============ GHOST CARD EXPANSION ============ */
+function GhostDashboard() {
+  const stats = [
+    { k: 'Status',       v: 'LIVE',    ok: true  },
+    { k: 'Uptime 30d',   v: '99.94%',  ok: false },
+    { k: 'Jobs Today',   v: '47',      ok: false },
+    { k: 'Avg Response', v: '420ms',   ok: false },
+  ];
+  const logs = [
+    { ok: true,  time: '14:32', job: 'job_intake',        dur: '0.4s'  },
+    { ok: true,  time: '14:28', job: 'retry_queue',       dur: '1.2s'  },
+    { ok: true,  time: '14:15', job: 'job_intake',        dur: '0.3s'  },
+    { ok: false, time: '13:58', job: 'notification_send', dur: 'retry' },
+    { ok: true,  time: '13:45', job: 'dispatch_worker',   dur: '0.8s'  },
+  ];
+  return (
+    <div className="ghost-dash">
+      <div className="ghost-dash-head">
+        <span><span className="pulse"></span>YOUR SYSTEM · ONLINE</span>
+        <span className="faint">management dashboard</span>
+      </div>
+      <div className="ghost-dash-stats">
+        {stats.map(s => (
+          <div key={s.k} className="ghost-dash-stat">
+            <div className={`ghost-dash-stat-val${s.ok ? ' ok' : ''}`}>{s.v}</div>
+            <div className="ghost-dash-stat-k">{s.k}</div>
+          </div>
+        ))}
+      </div>
+      <div className="ghost-dash-log-head">Recent Runs</div>
+      <div className="ghost-dash-log">
+        {logs.map((l, i) => (
+          <div key={i} className={`ghost-log-row${l.ok ? '' : ' warn'}`}>
+            <span className={`ghost-log-icon${l.ok ? ' ok' : ' warn'}`}>{l.ok ? '✓' : '⚠'}</span>
+            <span className="ghost-log-time">{l.time}</span>
+            <span className="ghost-log-job">{l.job}</span>
+            <span className="ghost-log-dur">{l.dur}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function GhostRepo({ bookUrl }) {
+  const tree = [
+    { pre: '',           name: 'your-system/',   dir: true  },
+    { pre: '├── ',       name: 'README.md',      dir: false },
+    { pre: '├── ',       name: '.env.example',   dir: false },
+    { pre: '├── ',       name: 'workflows/',     dir: true  },
+    { pre: '│   ├── ',  name: 'intake.json',    dir: false },
+    { pre: '│   └── ',  name: 'dispatch.json',  dir: false },
+    { pre: '├── ',       name: 'api/',           dir: true  },
+    { pre: '│   └── ',  name: 'main.py',        dir: false },
+    { pre: '└── ',       name: 'dashboard/',     dir: true  },
+    { pre: '    └── ',  name: 'index.html',     dir: false },
+  ];
+  const owns = [
+    'Hosted & live on handover day',
+    'Version-controlled on GitHub',
+    'Full documentation included',
+    'Management dashboard deployed',
+    'Error-handling & retry logic',
+  ];
+  return (
+    <div className="ghost-repo">
+      <div className="ghost-repo-head">Your Repo</div>
+      <div className="ghost-tree">
+        {tree.map((f, i) => (
+          <div key={i} className="ghost-tree-row">
+            <span className="ghost-tree-pre">{f.pre}</span>
+            <span className={`ghost-tree-name${f.dir ? ' dir' : ''}`}>{f.name}</span>
+          </div>
+        ))}
+      </div>
+      <div className="ghost-owns">
+        {owns.map((o, i) => (
+          <div key={i} className="ghost-own-row">
+            <span className="ghost-own-check">✓</span>
+            <span>{o}</span>
+          </div>
+        ))}
+      </div>
+      <div className="ghost-repo-cta">
+        <button className="card-toggle ghost-cta"
+          onClick={() => window.open(bookUrl, '_blank', 'noreferrer')}>
+          Book a Brief <span className="arrow">→</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* ============ GHOST CARD ============ */
 function GhostCard() {
+  const [expanded, setExpanded] = useState(false);
   const bookContact = (window.CONTACT || []).find(c => String(c.k).toLowerCase() === 'book');
   const bookUrl = bookContact?.href || 'https://calendly.com/revan_lombard';
   return (
-    <div className="card ghost" onClick={() => window.open(bookUrl, '_blank', 'noreferrer')}>
+    <div className={`card ghost${expanded ? ' expanded' : ''}`}
+      onClick={() => { if (!expanded) window.open(bookUrl, '_blank', 'noreferrer'); }}>
       <div className="idx" style={{opacity:0.3}}>E-??</div>
       <div className="sector ghost-sector">YOUR SECTOR</div>
       <h3 className="serif ghost-heading">This could<br />be yours.</h3>
@@ -78,10 +173,18 @@ function GhostCard() {
           <div className="card-stat-lbl">your outcome</div>
         </div>
         <button className="card-toggle ghost-cta"
-          onClick={e => { e.stopPropagation(); window.open(bookUrl, '_blank', 'noreferrer'); }}>
-          Book a Brief <span className="arrow">→</span>
+          onClick={e => { e.stopPropagation(); setExpanded(x => !x); }}>
+          {expanded ? '− Collapse' : '+ What You Get'}
         </button>
       </div>
+      {expanded && (
+        <div className="expansion" onClick={e => e.stopPropagation()}>
+          <div className="ghost-expansion">
+            <GhostDashboard />
+            <GhostRepo bookUrl={bookUrl} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

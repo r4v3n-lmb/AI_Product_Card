@@ -1,11 +1,11 @@
 // Tech stack
 window.STACK = [
-  { cat: '01 · Architectural Logic', lbl: 'Workflow Design', desc: 'Multi-branch logic, error-handling loops, solo-vs-fleet routing trees.', reveal: 'n8n · Mermaid · State Machines' },
+  { cat: '01 · Architectural Logic', lbl: 'Workflow Design', desc: 'Multi-branch logic, error-handling loops, solo-vs-fleet routing trees.', reveal: 'n8n · LangGraph · State Machines' },
   { cat: '02 · AI / LLM Layer', lbl: 'LLM Integration', desc: 'OpenAI, LangChain memory & tools, RAG pipelines, prompt engineering.', reveal: 'GPT-4 · Claude · Vector DBs' },
-  { cat: '03 · Automation Engines', lbl: 'Orchestration', desc: 'Self-hosted n8n, Make.com, and Python scripting for custom runners.', reveal: 'n8n · Make · Python' },
+  { cat: '03 · Automation Engines', lbl: 'Orchestration', desc: 'Self-hosted n8n, Python agents, and LangGraph runners for complex logic.', reveal: 'n8n · Python · LangGraph' },
   { cat: '04 · Global Scalability', lbl: 'Localization', desc: 'Multilingual NLP, multi-currency logic, cultural adaptation layers.', reveal: '5+ languages · ZA/UK/EU' },
-  { cat: '05 · Infrastructure', lbl: 'Systems & APIs', desc: 'GitHub pipelines, FastAPI endpoints, version-controlled deployment.', reveal: 'GitHub Actions · FastAPI' },
-  { cat: '06 · Observability', lbl: 'Dashboards', desc: 'Management dashboards with live run-logs, retry queues, alerting.', reveal: 'Grafana · Custom UIs' },
+  { cat: '05 · Infrastructure', lbl: 'Systems & APIs', desc: 'GitHub pipelines, FastAPI endpoints, Firebase data layer, version-controlled deployment.', reveal: 'FastAPI · Firebase · GitHub Actions' },
+  { cat: '06 · Observability', lbl: 'Dashboards', desc: 'Management dashboards with live run-logs, retry queues, and real-time alerting.', reveal: 'HTML · CSS · JS · Firestore' },
 ];
 
 // Build catalog
@@ -186,7 +186,10 @@ window.PROFILE = {
   ],
   secondary: [
     { k: 'FOCUS', v: 'Localization · Ops · RAG' },
-    { k: 'STACK', v: 'n8n · Python · OpenAI' },
+    { k: 'AGENTS', v: 'LangGraph · LangChain' },
+    { k: 'STACK', v: 'n8n · Python · FastAPI' },
+    { k: 'DATA', v: 'Firebase · Firestore' },
+    { k: 'FRONTEND', v: 'HTML · CSS · JS' },
     { k: 'LEAD TIME', v: '2-wk sprint cycle' },
   ],
 };

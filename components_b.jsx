@@ -279,6 +279,98 @@ function VolumeChart({ data }) {
   );
 }
 
+/* ============ AI ADOPTION CHART ============ */
+function AdoptionChart({ data, visible }) {
+  const [hovRow, setHovRow] = useState(null);
+  return (
+    <div className="adoption-chart">
+      {data.map((d, i) => (
+        <div key={i} className="adoption-row"
+          onMouseEnter={() => setHovRow(i)}
+          onMouseLeave={() => setHovRow(null)}>
+          <div className="adoption-sector"
+            style={hovRow === i ? { color: 'var(--ink)' } : undefined}>
+            {d.sector}
+          </div>
+          <div className="adoption-track"
+            style={hovRow === i ? { height: '7px' } : undefined}>
+            <div className="adoption-bar" style={{
+              width: visible ? `${d.pct}%` : '0%',
+              transitionDelay: `${i * 90}ms`,
+              background: hovRow === i ? 'var(--accent)' : undefined,
+            }} />
+          </div>
+          <div className="adoption-pct"
+            style={hovRow === i ? { color: 'var(--accent)' } : undefined}>
+            {d.pct}%
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============ AI IMPACT CHART ============ */
+function ImpactChart({ data, visible }) {
+  const [hovRow, setHovRow] = useState(null);
+  return (
+    <div className="impact-chart">
+      {data.map((d, i) => (
+        <div key={i} className="impact-row"
+          onMouseEnter={() => setHovRow(i)}
+          onMouseLeave={() => setHovRow(null)}>
+          <div className="impact-meta">
+            <div className="impact-label"
+              style={hovRow === i ? { color: 'var(--ink)' } : undefined}>
+              {d.label}
+            </div>
+            <div className="impact-tag">{d.tag}</div>
+          </div>
+          <div className="impact-track"
+            style={hovRow === i ? { height: '6px' } : undefined}>
+            <div className="impact-bar" style={{
+              width: visible ? `${d.pct}%` : '0%',
+              transitionDelay: `${i * 110}ms`,
+              background: hovRow === i ? 'var(--accent)' : undefined,
+            }} />
+          </div>
+          <div className="impact-val"
+            style={hovRow === i ? { color: 'var(--accent)' } : undefined}>
+            {d.pct}%
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ============ AI IMPACT PANEL ============ */
+function AIImpactPanel() {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.15 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+  const { adoption, impact, source } = window.AI_IMPACT;
+  return (
+    <div className="ai-impact-wrap" ref={ref}>
+      <div className="ai-impact-panels">
+        <div className="chart-panel">
+          <div className="chart-label">AI ADOPTION BY SECTOR · 2025</div>
+          <AdoptionChart data={adoption} visible={visible} />
+        </div>
+        <div className="chart-panel">
+          <div className="chart-label">AUTOMATION IMPACT · % IMPROVEMENT</div>
+          <ImpactChart data={impact} visible={visible} />
+        </div>
+      </div>
+      <div className="ai-impact-footer">Source: {source}</div>
+    </div>
+  );
+}
+
 function MetricsDash() {
   const [visible, setVisible] = useState(false);
   const ref = useRef(null);
@@ -303,6 +395,7 @@ function MetricsDash() {
           <VolumeChart data={m.volume} />
         </div>
       </div>
+      <AIImpactPanel />
     </div>
   );
 }

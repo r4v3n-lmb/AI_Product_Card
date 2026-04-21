@@ -169,6 +169,27 @@ window.PROFILE = {
   ],
 };
 
+window.AI_IMPACT = {
+  adoption: [
+    { sector: 'Financial Svcs', pct: 77 },
+    { sector: 'Technology',     pct: 74 },
+    { sector: 'Retail',         pct: 62 },
+    { sector: 'Healthcare',     pct: 58 },
+    { sector: 'Manufacturing',  pct: 55 },
+    { sector: 'Logistics',      pct: 52 },
+    { sector: 'Hospitality',    pct: 41 },
+    { sector: 'Legal / Prof.',  pct: 38 },
+  ],
+  impact: [
+    { label: 'Manual Hours Saved',   pct: 82, tag: 'workflow automation'       },
+    { label: 'Error Rate Reduction', pct: 74, tag: 'process AI'                },
+    { label: 'Response Time Cut',    pct: 68, tag: 'customer-facing agents'    },
+    { label: 'Cost Per Transaction', pct: 61, tag: 'vs. manual baseline'       },
+    { label: 'Lead Conversion Lift', pct: 34, tag: 'AI-qualified pipelines'    },
+  ],
+  source: 'McKinsey · Gartner · IBM Institute · 2024–25',
+};
+
 window.CONTACT = [
   { k: 'Email',     v: 'r4v3n.lmb@gmail.com',                   href: 'mailto:r4v3n.lmb@gmail.com',              copy: 'r4v3n.lmb@gmail.com' },
   { k: 'Phone',     v: '+27 72 237 5833',                       href: 'tel:+27722375833',                        copy: '+27 72 237 5833' },

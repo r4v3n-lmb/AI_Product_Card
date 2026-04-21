@@ -557,8 +557,8 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 .process-strip { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line-2); border-top: 0; background: var(--bg); }
 .process-strip-cell { padding: 12px 20px; border-right: 1px solid var(--line-2); }
 .process-strip-cell:last-child { border-right: 0; }
-.process-strip-k { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--ink-faint); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 4px; }
-.process-strip-v { font-family: 'Inter Tight'; font-size: 13px; color: var(--blueprint); letter-spacing: -0.01em; font-weight: 500; }
+.process-strip-k { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-faint); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px; }
+.process-strip-v { font-family: 'Inter Tight'; font-size: 17px; color: var(--blueprint); letter-spacing: -0.02em; font-weight: 500; }
 
 /* --- Chart callout (volume chart insight) --- */
 .chart-callout { padding-top: 18px; margin-top: auto; border-top: 1px solid var(--line-2); }

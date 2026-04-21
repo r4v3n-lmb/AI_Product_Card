@@ -532,28 +532,35 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 }
 .hero-avail .pulse { margin-right: 2px; }
 
-/* --- How It Works --- */
-.how-it-works {
+/* --- Process Steps (How It Works) --- */
+.process-steps {
   display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 0; border: 1px solid var(--line-2);
+  gap: 0; border: 1px solid var(--line-2); background: var(--bg-2);
 }
-.how-cell {
-  padding: 32px;
-  border-right: 1px solid var(--line-2);
-  background: var(--panel);
-  position: relative;
-  transition: background 0.15s ease;
+.process-cell { padding: 28px 28px 32px; border-right: 1px solid var(--line-2); }
+.process-cell:last-child { border-right: 0; }
+.process-hd { display: flex; align-items: center; margin-bottom: 20px; }
+.process-dot {
+  width: 32px; height: 32px; flex-shrink: 0;
+  border: 1px solid var(--blueprint);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono'; font-size: 10px;
+  color: var(--blueprint); letter-spacing: 0.12em;
+  background: var(--bg-2);
 }
-.how-cell:last-child { border-right: 0; }
-.how-cell::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 2px; background: var(--blueprint); opacity: 0; transition: opacity 0.15s;
+.process-conn {
+  flex: 1; height: 1px; background: var(--blueprint); opacity: 0.25;
+  margin-right: -28px;
 }
-.how-cell:hover::before { opacity: 1; }
-.how-cell:hover { background: #151a21; }
-.how-num { font-family: 'Inter Tight'; font-size: 56px; font-weight: 300; color: var(--line-3); letter-spacing: -0.04em; line-height: 1; margin-bottom: 20px; }
-.how-title { font-family: 'Inter Tight'; font-size: 22px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 12px; color: var(--ink); }
-.how-body { font-size: 12px; color: var(--ink-dim); line-height: 1.7; }
+.process-title { font-family: 'Inter Tight'; font-size: 20px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 10px; color: var(--ink); }
+.process-body { font-size: 12px; color: var(--ink-dim); line-height: 1.7; }
+
+/* --- Chart callout (volume chart insight) --- */
+.chart-callout { padding-top: 18px; margin-top: auto; border-top: 1px solid var(--line-2); }
+.chart-callout-from { font-family: 'Inter Tight'; font-size: 22px; color: var(--ink-faint); letter-spacing: -0.02em; }
+.chart-callout-arrow { font-family: 'JetBrains Mono'; font-size: 14px; color: var(--blueprint); opacity: 0.5; margin: 0 4px; }
+.chart-callout-to { font-family: 'Inter Tight'; font-size: 28px; color: var(--blueprint); letter-spacing: -0.03em; font-weight: 500; }
+.chart-callout-lbl { font-size: 9px; color: var(--ink-faint); letter-spacing: 0.14em; text-transform: uppercase; margin-top: 4px; }
 
 /* --- Testimonial stack (multiple) --- */
 .testimonial-stack { display: flex; flex-direction: column; }
@@ -631,8 +638,9 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
   .tour-tooltip { width: calc(100vw - 32px); left: 16px !important; right: 16px; }
   .frame { padding: 16px; }
   .hero h1 { font-size: 48px; }
-  .how-it-works { grid-template-columns: 1fr; }
-  .how-cell { border-right: 0 !important; border-bottom: 1px solid var(--line-2); }
-  .how-cell:last-child { border-bottom: 0; }
+  .process-steps { grid-template-columns: 1fr; }
+  .process-cell { border-right: 0 !important; border-bottom: 1px solid var(--line-2); }
+  .process-cell:last-child { border-bottom: 0; }
+  .process-conn { display: none; }
   .testimonial-stack { gap: 0; }
 }

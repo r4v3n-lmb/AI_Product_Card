@@ -515,9 +515,17 @@ function MetricsDash() {
           <div className="chart-note">enterprise averages — hover to inspect</div>
           <RadarChart data={m.outcomes} visible={visible} />
         </div>
-        <div className="chart-panel">
+        <div className="chart-panel" style={{display:'flex',flexDirection:'column'}}>
           <div className="chart-label">AI ADOPTION GROWTH · % ORGS 2017–2024</div>
           <VolumeChart data={m.volume} ceil={80} pct={true} />
+          <div className="chart-callout">
+            <div>
+              <span className="chart-callout-from">20%</span>
+              <span className="chart-callout-arrow"> → </span>
+              <span className="chart-callout-to">72%</span>
+            </div>
+            <div className="chart-callout-lbl">7-year enterprise AI adoption growth</div>
+          </div>
         </div>
       </div>
       {m.source && <div className="metrics-chart-source">Source: {m.source}</div>}
@@ -531,28 +539,28 @@ function MetricsDash() {
 function HowItWorks() {
   const steps = [
     {
-      num: '01',
-      title: 'Brief',
+      num: '01', title: 'Brief',
       body: 'Book a 20-min call or drop a WhatsApp. Tell me what\'s broken, slow, or manual. I\'ll ask the right questions and come back with an architecture sketch — not a proposal deck.',
     },
     {
-      num: '02',
-      title: 'Build',
+      num: '02', title: 'Build',
       body: 'Once aligned, we sprint. First live flow ships in week one. Every step is version-controlled so you can see exactly what\'s running and why.',
     },
     {
-      num: '03',
-      title: 'Ship',
+      num: '03', title: 'Ship',
       body: 'Production-ready system with error handling, retry queues, and a management dashboard. Documented, version-controlled, and genuinely yours to own.',
     },
   ];
   return (
-    <div className="how-it-works">
-      {steps.map(s => (
-        <div key={s.num} className="how-cell">
-          <div className="how-num serif">{s.num}</div>
-          <h4 className="how-title serif">{s.title}</h4>
-          <p className="how-body">{s.body}</p>
+    <div className="process-steps">
+      {steps.map((s, i) => (
+        <div key={s.num} className="process-cell">
+          <div className="process-hd">
+            <div className="process-dot">{s.num}</div>
+            {i < steps.length - 1 && <div className="process-conn"></div>}
+          </div>
+          <h4 className="process-title serif">{s.title}</h4>
+          <p className="process-body">{s.body}</p>
         </div>
       ))}
     </div>

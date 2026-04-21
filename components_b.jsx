@@ -187,7 +187,7 @@ function ProofGrid() {
           <span>{fmtDate(now)}</span>
         </div>
       </div>
-      <div className="testimonial-stack">
+      <div className="testimonial-row">
         {testimonials.map((t, i) => (
           <div key={i} className="testimonial">
             <blockquote className="serif">{t.q}</blockquote>

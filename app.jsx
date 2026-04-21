@@ -60,6 +60,9 @@ function ChatFloater() {
   const bookUrl = bookContact?.href
     || (bookContact?.v ? `https://${String(bookContact.v).replace(/^https?:\/\//, '')}` : 'https://calendly.com/techmate-sa');
   const bookDisplay = bookUrl.replace(/^https?:\/\//, '');
+  const emailContact = (window.CONTACT || []).find(c => String(c.k).toLowerCase() === 'email');
+  const phoneContact = (window.CONTACT || []).find(c => String(c.k).toLowerCase() === 'phone');
+  const fallbackContacts = [emailContact?.copy, phoneContact?.copy].filter(Boolean).join(' · ');
   const presetReplies = {
     'What do you build?': 'I build autonomous ops systems: AI intake, dispatch, retention flows, ordering bots, and localization pipelines using n8n, Python, RAG, and API integrations.',
     'Pricing?': `Pricing scales with scope, integrations, and reliability requirements. Typical work starts with a focused sprint, then expands to managed rollout. Book a diagnostic at ${bookDisplay}.`,
@@ -120,11 +123,7 @@ function ChatFloater() {
       const reply = await getBotReply(sys, q);
       setMsgs(prev => [...prev, { r: 'bot', t: reply.trim() }]);
     } catch (e) {
-      const msg =
-        e?.message === 'ai_client_not_configured'
-          ? `AI agent is offline: no AI client is configured on this page. Add window.claude or set window.AI_INTAKE_ENDPOINT. Reach Revan at ${bookDisplay}.`
-          : `AI connection hiccup — try again, or reach Revan at ${bookDisplay}.`;
-      setMsgs(prev => [...prev, { r: 'bot', t: msg }]);
+      setMsgs(prev => [...prev, { r: 'bot', t: `AI connection hiccup — try again, or reach Revan directly: ${fallbackContacts}.` }]);
     } finally {
       setThinking(false);
     }

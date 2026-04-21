@@ -465,6 +465,7 @@ function MetricsDash() {
       <div className="kpi-row">
         {m.kpis.map((k, i) => <KpiCard key={i} {...k} />)}
       </div>
+      <div className="metrics-section-label"><span>MY SYSTEMS · LIVE METRICS</span></div>
       <div className="metrics-charts">
         <div className="chart-panel">
           <div className="chart-label">BUILD OUTCOMES · CAPABILITY RADAR</div>
@@ -475,6 +476,7 @@ function MetricsDash() {
           <VolumeChart data={m.volume} />
         </div>
       </div>
+      <div className="metrics-section-label"><span>INDUSTRY BENCHMARKS · 2024–25</span></div>
       <AIImpactPanel />
     </div>
   );

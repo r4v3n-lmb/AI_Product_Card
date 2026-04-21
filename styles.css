@@ -316,6 +316,28 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 .tech { font-size: 10px; letter-spacing: 0.1em; padding: 4px 8px; border: 1px solid var(--line-2); color: var(--ink-dim); }
 .tech:hover { color: var(--ink); border-color: var(--line-3); }
 
+/* --- Ghost card --- */
+.card.ghost { background: transparent; cursor: pointer; }
+.card.ghost::after {
+  content: ''; position: absolute; inset: 10px;
+  border: 1px dashed var(--line-3); pointer-events: none;
+  transition: border-color 0.15s ease, border-style 0.15s ease;
+}
+.card.ghost:hover { background: rgba(122,184,212,0.02); }
+.card.ghost:hover::after { border-color: var(--blueprint); border-style: solid; }
+.card.ghost:hover::before { opacity: 1; }
+.ghost-sector::before { background: var(--line-3) !important; }
+.card.ghost:hover .ghost-sector::before { background: var(--blueprint) !important; }
+.ghost-sector { color: var(--ink-faint); opacity: 0.7; }
+.ghost-heading { color: var(--ink-dim); transition: color 0.15s; }
+.card.ghost:hover .ghost-heading { color: var(--ink); }
+.ghost-field { opacity: 0.4; transition: opacity 0.15s; font-style: italic; }
+.card.ghost:hover .ghost-field { opacity: 0.65; }
+.ghost-field .label { font-style: normal; }
+.ghost-stat { color: var(--ink-faint) !important; }
+.ghost-cta { color: var(--blueprint) !important; }
+.card.ghost:hover .ghost-cta { color: var(--accent) !important; }
+
 /* --- Philosophy --- */
 .philosophy {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 0;

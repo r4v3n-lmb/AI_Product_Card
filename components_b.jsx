@@ -55,6 +55,37 @@ function CatalogCard({ item, expanded, onToggle }) {
   );
 }
 
+/* ============ GHOST CARD ============ */
+function GhostCard() {
+  const bookContact = (window.CONTACT || []).find(c => String(c.k).toLowerCase() === 'book');
+  const bookUrl = bookContact?.href || 'https://calendly.com/revan_lombard';
+  return (
+    <div className="card ghost" onClick={() => window.open(bookUrl, '_blank', 'noreferrer')}>
+      <div className="idx" style={{opacity:0.3}}>E-??</div>
+      <div className="sector ghost-sector">YOUR SECTOR</div>
+      <h3 className="serif ghost-heading">This could<br />be yours.</h3>
+      <div className="problem ghost-field">
+        <span className="label">Problem</span>
+        What's slowing your operations down?
+      </div>
+      <div className="solution ghost-field">
+        <span className="label">Solution</span>
+        A custom system, version-controlled and production-ready.
+      </div>
+      <div className="card-meta">
+        <div>
+          <div className="card-stat ghost-stat">?</div>
+          <div className="card-stat-lbl">your outcome</div>
+        </div>
+        <button className="card-toggle ghost-cta"
+          onClick={e => { e.stopPropagation(); window.open(bookUrl, '_blank', 'noreferrer'); }}>
+          Book a Brief <span className="arrow">→</span>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 /* ============ ELITE 10 ============ */
 function Elite10() {
   const [expanded, setExpanded] = useState(() => window.CATALOG?.[0]?.id ?? null);
@@ -69,6 +100,7 @@ function Elite10() {
           onToggle={() => setExpanded(expanded === item.id ? null : item.id)}
         />
       ))}
+      <GhostCard />
     </div>
   );
 }

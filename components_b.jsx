@@ -191,7 +191,7 @@ function GhostCard() {
 
 /* ============ ELITE 10 ============ */
 function Elite10() {
-  const [expanded, setExpanded] = useState(() => window.CATALOG?.[0]?.id ?? null);
+  const [expanded, setExpanded] = useState(null);
 
   return (
     <div className="catalog">

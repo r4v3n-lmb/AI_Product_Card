@@ -9,6 +9,7 @@ function TopBar() {
   }, []);
   const pad = n => String(n).padStart(2, '0');
   const stamp = `${time.getUTCFullYear()}.${pad(time.getUTCMonth()+1)}.${pad(time.getUTCDate())} · ${pad(time.getUTCHours())}:${pad(time.getUTCMinutes())}:${pad(time.getUTCSeconds())} UTC`;
+  const rev = `REV ${pad(time.getUTCMonth()+1)}.${String(time.getUTCFullYear()).slice(2)}`;
   return (
     <div className="topbar">
       <div className="left">
@@ -21,7 +22,7 @@ function TopBar() {
       </div>
       <div className="right">
         <span className="faint">{stamp}</span>
-        <span>REV 04.26</span>
+        <span>{rev}</span>
       </div>
     </div>
   );
@@ -122,8 +123,10 @@ function Terminal() {
   const [lines, setLines] = useState([]);
   const [done, setDone] = useState(false);
   const bodyRef = useRef(null);
+  const [replay, setReplay] = useState(0);
 
   useEffect(() => {
+    setLines([]); setDone(false);
     let cancelled = false;
     let timeouts = [];
     const script = window.TERMINAL_SCRIPT;
@@ -139,7 +142,7 @@ function Terminal() {
       timeouts.push(id);
     });
     return () => { cancelled = true; timeouts.forEach(clearTimeout); };
-  }, []);
+  }, [replay]);
 
   useEffect(() => { if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight; }, [lines]);
 
@@ -162,6 +165,7 @@ function Terminal() {
       <div className="terminal-head">
         <div className="dots"><span></span><span></span><span></span></div>
         <span>zsh · revan@architect · ~/ops</span>
+        {done && <button className="replay-btn" onClick={() => setReplay(r => r+1)}>↺ REPLAY</button>}
       </div>
       <div className="terminal-body" ref={bodyRef}>
         {lines.map(render)}

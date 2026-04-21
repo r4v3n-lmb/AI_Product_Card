@@ -50,9 +50,12 @@ function Contact() {
 /* ============ CHAT FLOATER ============ */
 function ChatFloater() {
   const [open, setOpen] = useState(false);
-  const [msgs, setMsgs] = useState([
-    { r: 'bot', t: 'Hi — I\'m Revan\'s intake agent. Ask me what he builds, pricing logic, or timelines.' },
-  ]);
+  const [msgs, setMsgs] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('chat_msgs');
+      return saved ? JSON.parse(saved) : [{ r: 'bot', t: 'Hi — I\'m Revan\'s intake agent. Ask me what he builds, pricing logic, or timelines.' }];
+    } catch { return [{ r: 'bot', t: 'Hi — I\'m Revan\'s intake agent. Ask me what he builds, pricing logic, or timelines.' }]; }
+  });
   const [input, setInput] = useState('');
   const [thinking, setThinking] = useState(false);
   const bodyRef = useRef(null);
@@ -74,6 +77,16 @@ function ChatFloater() {
     const handler = () => setOpen(true);
     window.addEventListener('open-chat', handler);
     return () => window.removeEventListener('open-chat', handler);
+  }, []);
+
+  useEffect(() => {
+    try { sessionStorage.setItem('chat_msgs', JSON.stringify(msgs)); } catch {}
+  }, [msgs]);
+
+  useEffect(() => {
+    const handler = (e) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
   }, []);
 
   useEffect(() => {
@@ -181,8 +194,52 @@ function FooterBar() {
   );
 }
 
+/* ============ SECTION NAV ============ */
+function SectionNav() {
+  const [active, setActive] = useState('');
+  const ids = ['s02','s03','s04','s05','s06'];
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); }),
+      { threshold: 0.25 }
+    );
+    ids.forEach(id => { const el = document.getElementById(id); if (el) obs.observe(el); });
+    return () => obs.disconnect();
+  }, []);
+  return (
+    <nav className="section-nav">
+      {ids.map(id => (
+        <button key={id} className={`nav-dot ${active === id ? 'active' : ''}`}
+          title={`§${id.slice(1)}`}
+          onClick={() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })} />
+      ))}
+    </nav>
+  );
+}
+
+/* ============ SCROLL TOP ============ */
+function ScrollTop() {
+  const [vis, setVis] = useState(false);
+  useEffect(() => {
+    const handler = () => setVis(window.scrollY > 600);
+    window.addEventListener('scroll', handler, { passive: true });
+    return () => window.removeEventListener('scroll', handler);
+  }, []);
+  if (!vis) return null;
+  return <button className="scroll-top" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>↑</button>;
+}
+
 /* ============ APP ============ */
 function App() {
+  useEffect(() => {
+    const obs = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+      { threshold: 0.06 }
+    );
+    document.querySelectorAll('.reveal-section').forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, []);
+
   return (
     <div className="frame">
       <div className="crosshair ch-tl"></div>
@@ -191,10 +248,9 @@ function App() {
       <div className="crosshair ch-br"></div>
 
       <TopBar />
-
       <Hero />
 
-      <section data-screen-label="02 Capabilities">
+      <section id="s02" className="reveal-section" data-screen-label="02 Capabilities">
         <SectionLabel num="02" title="Capabilities Terminal · Tech Stack" coord="C-01 / D-08" />
         <div className="split">
           <Terminal />
@@ -202,28 +258,30 @@ function App() {
         </div>
       </section>
 
-      <section data-screen-label="03 Build Catalog">
+      <section id="s03" className="reveal-section" data-screen-label="03 Build Catalog">
         <SectionLabel num="03" title="Build Catalog" coord="E-01 / J-12" />
         <Elite10 />
       </section>
 
-      <section data-screen-label="04 Philosophy">
+      <section id="s04" className="reveal-section" data-screen-label="04 Philosophy">
         <SectionLabel num="04" title="Builder's Philosophy" coord="K-01 / K-06" />
         <Philosophy />
       </section>
 
-      <section data-screen-label="05 Proof">
+      <section id="s05" className="reveal-section" data-screen-label="05 Proof">
         <SectionLabel num="05" title="Proof of Work · Field Signal" coord="L-01 / M-10" />
         <ProofGrid />
       </section>
 
-      <section data-screen-label="06 Contact">
+      <section id="s06" className="reveal-section" data-screen-label="06 Contact">
         <SectionLabel num="06" title="Engagement · Direct Channels" coord="N-01 / N-08" />
         <Contact />
       </section>
 
       <FooterBar />
       <ChatFloater />
+      <SectionNav />
+      <ScrollTop />
     </div>
   );
 }

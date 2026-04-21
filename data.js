@@ -113,12 +113,15 @@ window.METRICS = {
     { label: 'Cost Reduction',        short: 'Cost Cut',    value: 40 },
   ],
   // % of organisations using AI in at least one business function — McKinsey State of AI annual survey
+  // 2025–26 are Gartner projections (80%+ enterprises using GenAI APIs/apps by 2026)
   volume: [
     { month: '2017', v: 20 }, { month: '2018', v: 25 }, { month: '2019', v: 32 },
     { month: '2020', v: 35 }, { month: '2021', v: 46 }, { month: '2022', v: 50 },
     { month: '2023', v: 55 }, { month: '2024', v: 72 },
+    { month: '2025', v: 82, forecast: true },
+    { month: '2026', v: 89, forecast: true },
   ],
-  source: 'McKinsey "State of AI" Annual Survey 2017–2024 · GitHub / Microsoft Research 2024',
+  source: 'McKinsey "State of AI" Annual Survey 2017–2024 · Gartner forecast 2025–26 · GitHub / Microsoft Research 2024',
 };
 
 window.TERMINAL_SCRIPT = [

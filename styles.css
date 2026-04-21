@@ -561,6 +561,7 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 .chart-callout-arrow { font-family: 'JetBrains Mono'; font-size: 14px; color: var(--blueprint); opacity: 0.5; margin: 0 4px; }
 .chart-callout-to { font-family: 'Inter Tight'; font-size: 28px; color: var(--blueprint); letter-spacing: -0.03em; font-weight: 500; }
 .chart-callout-lbl { font-size: 9px; color: var(--ink-faint); letter-spacing: 0.14em; text-transform: uppercase; margin-top: 4px; }
+.chart-callout-proj { font-family: 'Inter Tight'; font-size: 28px; color: var(--blueprint); letter-spacing: -0.03em; font-weight: 500; opacity: 0.55; border-bottom: 1px dashed rgba(122,184,212,0.4); }
 
 /* --- Testimonial row (3-up below heatmap) --- */
 .testimonial-row {

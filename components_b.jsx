@@ -295,9 +295,20 @@ function VolumeChart({ data, ceil = 1600, pct = false }) {
   const x = i => pad.l + (i / (data.length - 1)) * pw;
   const y = v => pad.t + ph - (v / CEIL) * ph;
   const pts = data.map((d, i) => [x(i), y(d.v)]);
-  const line = pts.map(([px, py], i) => `${i === 0 ? 'M' : 'L'}${px.toFixed(1)},${py.toFixed(1)}`).join(' ');
-  const area = `${line} L${x(data.length - 1).toFixed(1)},${(pad.t + ph).toFixed(1)} L${pad.l.toFixed(1)},${(pad.t + ph).toFixed(1)} Z`;
-  const gridVals = pct ? [0, 20, 40, 60, 80] : [0, 400, 800, 1200, 1600];
+
+  // Split at forecast boundary
+  const forecastStart = data.findIndex(d => d.forecast);
+  const hasForecasts = forecastStart !== -1;
+  const buildLine = ptArr => ptArr.map(([px, py], i) => `${i === 0 ? 'M' : 'L'}${px.toFixed(1)},${py.toFixed(1)}`).join(' ');
+  // Actual line includes the last actual point as the start of forecast segment
+  const actualPts = pts.slice(0, hasForecasts ? forecastStart + 1 : pts.length);
+  const forecastPts = hasForecasts ? pts.slice(forecastStart) : [];
+  const actualLine = buildLine(actualPts);
+  const forecastLine = hasForecasts ? buildLine(forecastPts) : '';
+  const area = `${actualLine} L${actualPts[actualPts.length - 1][0].toFixed(1)},${(pad.t + ph).toFixed(1)} L${pad.l.toFixed(1)},${(pad.t + ph).toFixed(1)} Z`;
+  const sepX = hasForecasts ? x(forecastStart) : null;
+
+  const gridVals = pct ? [0, 25, 50, 75, 100] : [0, 400, 800, 1200, 1600];
   const xIdx = data.length <= 9 ? data.map((_, i) => i) : [0, 3, 6, 9, 11];
   const fmtY   = v => v === 0 ? '0' : pct ? `${v}%` : `${v / 1000}k`;
   const fmtTip = v => pct ? `${v}%` : v >= 1000 ? `${(v / 1000).toFixed(2)}k` : String(v);
@@ -331,18 +342,45 @@ function VolumeChart({ data, ceil = 1600, pct = false }) {
           </text>
         </g>
       ))}
+      {/* Forecast zone background */}
+      {hasForecasts && (
+        <rect x={sepX} y={pad.t} width={W - pad.r - sepX} height={ph}
+          fill="rgba(122,184,212,0.03)" />
+      )}
+      {/* Actual area + line */}
       <path d={area} fill="rgba(122,184,212,0.07)" />
-      <path d={line} fill="none" stroke="var(--blueprint)" strokeWidth="1.5" strokeLinejoin="round" />
+      <path d={actualLine} fill="none" stroke="var(--blueprint)" strokeWidth="1.5" strokeLinejoin="round" />
+      {/* Forecast dashed line */}
+      {hasForecasts && (
+        <path d={forecastLine} fill="none" stroke="var(--blueprint)" strokeWidth="1.5"
+          strokeLinejoin="round" strokeDasharray="5 3" opacity="0.6" />
+      )}
+      {/* Forecast separator */}
+      {hasForecasts && (
+        <>
+          <line x1={sepX} x2={sepX} y1={pad.t} y2={pad.t + ph}
+            stroke="var(--blueprint)" strokeWidth="1" strokeDasharray="3 3" opacity="0.25" />
+          <text x={sepX + 4} y={pad.t + 9} fill="var(--blueprint)" fontSize="7"
+            fontFamily="JetBrains Mono, monospace" opacity="0.5">PROJ.</text>
+        </>
+      )}
+      {/* Hover crosshair */}
       {hovIdx !== null && (
         <line x1={hovPt[0]} x2={hovPt[0]} y1={pad.t} y2={pad.t + ph}
           stroke="var(--blueprint)" strokeWidth="1" strokeDasharray="3 3" opacity="0.45" />
       )}
-      {pts.map(([px, py], i) => (
-        <circle key={i} cx={px} cy={py}
-          r={i === hovIdx ? 4.5 : 2.5}
-          fill={i === hovIdx ? 'var(--blueprint)' : 'var(--bg)'}
-          stroke="var(--blueprint)" strokeWidth="1.5" />
-      ))}
+      {/* Data points */}
+      {pts.map(([px, py], i) => {
+        const isForecast = hasForecasts && i >= forecastStart;
+        return (
+          <circle key={i} cx={px} cy={py}
+            r={i === hovIdx ? 4.5 : 2.5}
+            fill={i === hovIdx ? (isForecast ? 'rgba(122,184,212,0.4)' : 'var(--blueprint)') : 'var(--bg)'}
+            stroke="var(--blueprint)"
+            strokeWidth={isForecast ? 1 : 1.5}
+            opacity={isForecast ? 0.6 : 1} />
+        );
+      })}
       {xIdx.map(i => (
         <text key={i} x={x(i)} y={H - 6} fill="var(--ink-faint)" fontSize="8.5"
           textAnchor="middle" fontFamily="JetBrains Mono, monospace">{data[i].month}</text>
@@ -353,9 +391,10 @@ function VolumeChart({ data, ceil = 1600, pct = false }) {
             fill="var(--panel)" stroke="var(--line-2)" strokeWidth="1" />
           <text x={tx + TW / 2} y={ty + 11} fill="var(--ink-faint)" fontSize="7.5"
             textAnchor="middle" fontFamily="JetBrains Mono, monospace">
-            {data[hovIdx].month}
+            {data[hovIdx].month}{data[hovIdx].forecast ? ' ◇' : ''}
           </text>
-          <text x={tx + TW / 2} y={ty + 23} fill="var(--blueprint)" fontSize="9.5"
+          <text x={tx + TW / 2} y={ty + 23}
+            fill={data[hovIdx].forecast ? 'rgba(122,184,212,0.7)' : 'var(--blueprint)'} fontSize="9.5"
             textAnchor="middle" fontFamily="JetBrains Mono, monospace">
             {fmtTip(data[hovIdx].v)}
           </text>
@@ -516,15 +555,17 @@ function MetricsDash() {
           <RadarChart data={m.outcomes} visible={visible} />
         </div>
         <div className="chart-panel" style={{display:'flex',flexDirection:'column'}}>
-          <div className="chart-label">AI ADOPTION GROWTH · % ORGS 2017–2024</div>
-          <VolumeChart data={m.volume} ceil={80} pct={true} />
+          <div className="chart-label">AI ADOPTION GROWTH · % ORGS 2017–2026</div>
+          <VolumeChart data={m.volume} ceil={100} pct={true} />
           <div className="chart-callout">
             <div>
               <span className="chart-callout-from">20%</span>
               <span className="chart-callout-arrow"> → </span>
               <span className="chart-callout-to">72%</span>
+              <span className="chart-callout-arrow"> → </span>
+              <span className="chart-callout-proj">89%</span>
             </div>
-            <div className="chart-callout-lbl">7-year enterprise AI adoption growth</div>
+            <div className="chart-callout-lbl">7-yr growth · projected 89% by 2026 (Gartner)</div>
           </div>
         </div>
       </div>

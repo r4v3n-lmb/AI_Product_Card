@@ -592,19 +592,36 @@ function HowItWorks() {
       body: 'Production-ready system with error handling, retry queues, and a management dashboard. Documented, version-controlled, and genuinely yours to own.',
     },
   ];
+  const specs = [
+    { k: 'Sprint Cycle', v: '2 Weeks' },
+    { k: 'First Deploy', v: 'Day 7' },
+    { k: 'Pricing', v: 'Scope-Based' },
+    { k: 'Deliverable', v: 'Repo + Dashboard' },
+  ];
+
   return (
-    <div className="process-steps">
-      {steps.map((s, i) => (
-        <div key={s.num} className="process-cell">
-          <div className="process-hd">
-            <div className="process-dot">{s.num}</div>
-            {i < steps.length - 1 && <div className="process-conn"></div>}
+    <>
+      <div className="process-steps">
+        {steps.map((s, i) => (
+          <div key={s.num} className="process-cell">
+            <div className="process-hd">
+              <div className="process-dot">{s.num}</div>
+              {i < steps.length - 1 && <div className="process-conn"></div>}
+            </div>
+            <h4 className="process-title serif">{s.title}</h4>
+            <p className="process-body">{s.body}</p>
           </div>
-          <h4 className="process-title serif">{s.title}</h4>
-          <p className="process-body">{s.body}</p>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      <div className="process-strip">
+        {specs.map(s => (
+          <div key={s.k} className="process-strip-cell">
+            <div className="process-strip-k">{s.k}</div>
+            <div className="process-strip-v">{s.v}</div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 

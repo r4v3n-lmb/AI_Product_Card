@@ -166,6 +166,11 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 .hero-card dt { color: var(--ink-faint); }
 .hero-card dd { color: var(--ink); text-align: right; }
 .hero-card .divider { height: 1px; background: var(--line-2); margin: 14px 0; }
+.hero-card-process { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line-2); display: flex; align-items: center; gap: 6px; }
+.hero-card-step { display: flex; flex-direction: column; align-items: center; flex: 1; border: 1px solid var(--line-2); padding: 8px 4px; gap: 4px; }
+.hero-card-step-num { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--blueprint); letter-spacing: 0.12em; }
+.hero-card-step-lbl { font-family: 'Inter Tight'; font-size: 11px; color: var(--ink-dim); font-weight: 500; letter-spacing: 0.04em; }
+.hero-card-step-arrow { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--blueprint); opacity: 0.4; flex-shrink: 0; }
 .cta-row { display: flex; gap: 12px; margin-top: 36px; flex-wrap: wrap; }
 .btn {
   display: inline-flex; align-items: center; gap: 10px;

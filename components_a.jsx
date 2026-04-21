@@ -115,6 +115,17 @@ function Hero() {
                 </React.Fragment>
               ))}
             </dl>
+            <div className="hero-card-process">
+              {['Brief', 'Build', 'Ship'].map((s, i, arr) => (
+                <React.Fragment key={s}>
+                  <div className="hero-card-step">
+                    <span className="hero-card-step-num">0{i + 1}</span>
+                    <span className="hero-card-step-lbl">{s}</span>
+                  </div>
+                  {i < arr.length - 1 && <span className="hero-card-step-arrow">→</span>}
+                </React.Fragment>
+              ))}
+            </div>
           </aside>
         </div>
       </div>

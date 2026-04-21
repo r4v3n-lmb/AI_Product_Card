@@ -24,18 +24,15 @@ export default {
       });
     }
 
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${env.GEMINI_API_KEY}`;
+
+    const res = await fetch(url, {
       method: 'POST',
-      headers: {
-        'x-api-key': env.ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
-      },
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 120,
-        system,
-        messages: [{ role: 'user', content: message }],
+        system_instruction: { parts: [{ text: system }] },
+        contents: [{ role: 'user', parts: [{ text: message }] }],
+        generationConfig: { maxOutputTokens: 120 },
       }),
     });
 
@@ -48,7 +45,7 @@ export default {
     }
 
     const data = await res.json();
-    const reply = data.content?.[0]?.text ?? '';
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
 
     return new Response(JSON.stringify({ reply }), {
       headers: { ...CORS, 'Content-Type': 'application/json' },

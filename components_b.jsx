@@ -171,18 +171,29 @@ function KpiCard({ label, value, unit }) {
 }
 
 function OutcomeChart({ data, visible }) {
+  const [hovRow, setHovRow] = useState(null);
   return (
     <div className="outcome-chart">
       {data.map((d, i) => (
-        <div key={i} className="outcome-row">
-          <div className="outcome-label">{d.label}</div>
-          <div className="outcome-track">
+        <div key={i} className="outcome-row"
+          onMouseEnter={() => setHovRow(i)}
+          onMouseLeave={() => setHovRow(null)}>
+          <div className="outcome-label"
+            style={hovRow === i ? { color: 'var(--ink)' } : undefined}>
+            {d.label}
+          </div>
+          <div className="outcome-track"
+            style={hovRow === i ? { height: '6px' } : undefined}>
             <div className="outcome-bar" style={{
               width: visible ? `${d.value}%` : '0%',
               transitionDelay: `${i * 130}ms`,
+              background: hovRow === i ? 'var(--accent)' : undefined,
             }} />
           </div>
-          <div className="outcome-val">{d.value}%</div>
+          <div className="outcome-val"
+            style={hovRow === i ? { color: 'var(--accent)' } : undefined}>
+            {d.value}%
+          </div>
         </div>
       ))}
     </div>
@@ -190,6 +201,8 @@ function OutcomeChart({ data, visible }) {
 }
 
 function VolumeChart({ data }) {
+  const [hovIdx, setHovIdx] = useState(null);
+  const svgRef = useRef(null);
   const W = 480, H = 190;
   const pad = { t: 20, r: 20, b: 34, l: 44 };
   const pw = W - pad.l - pad.r;
@@ -202,8 +215,27 @@ function VolumeChart({ data }) {
   const area = `${line} L${x(data.length - 1).toFixed(1)},${(pad.t + ph).toFixed(1)} L${pad.l.toFixed(1)},${(pad.t + ph).toFixed(1)} Z`;
   const gridVals = [0, 400, 800, 1200, 1600];
   const xIdx = [0, 3, 6, 9, 11];
+
+  const handleMouseMove = (e) => {
+    if (!svgRef.current) return;
+    const rect = svgRef.current.getBoundingClientRect();
+    const svgX = ((e.clientX - rect.left) / rect.width) * W;
+    let closest = 0, closestDist = Infinity;
+    pts.forEach(([px], i) => {
+      const d = Math.abs(px - svgX);
+      if (d < closestDist) { closestDist = d; closest = i; }
+    });
+    setHovIdx(closest);
+  };
+
+  const TW = 66, TH = 30;
+  const hovPt = hovIdx !== null ? pts[hovIdx] : null;
+  const tx = hovPt ? Math.min(Math.max(hovPt[0] - TW / 2, pad.l), W - pad.r - TW) : 0;
+  const ty = hovPt ? Math.max(hovPt[1] - TH - 10, pad.t) : 0;
+
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="volume-svg" preserveAspectRatio="xMidYMid meet">
+    <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} className="volume-svg" preserveAspectRatio="xMidYMid meet"
+      onMouseMove={handleMouseMove} onMouseLeave={() => setHovIdx(null)}>
       {gridVals.map(v => (
         <g key={v}>
           <line x1={pad.l} x2={W - pad.r} y1={y(v)} y2={y(v)} stroke="var(--line)" strokeWidth="1" />
@@ -215,13 +247,34 @@ function VolumeChart({ data }) {
       ))}
       <path d={area} fill="rgba(122,184,212,0.07)" />
       <path d={line} fill="none" stroke="var(--blueprint)" strokeWidth="1.5" strokeLinejoin="round" />
+      {hovIdx !== null && (
+        <line x1={hovPt[0]} x2={hovPt[0]} y1={pad.t} y2={pad.t + ph}
+          stroke="var(--blueprint)" strokeWidth="1" strokeDasharray="3 3" opacity="0.45" />
+      )}
       {pts.map(([px, py], i) => (
-        <circle key={i} cx={px} cy={py} r="2.5" fill="var(--bg)" stroke="var(--blueprint)" strokeWidth="1.5" />
+        <circle key={i} cx={px} cy={py}
+          r={i === hovIdx ? 4.5 : 2.5}
+          fill={i === hovIdx ? 'var(--blueprint)' : 'var(--bg)'}
+          stroke="var(--blueprint)" strokeWidth="1.5" />
       ))}
       {xIdx.map(i => (
         <text key={i} x={x(i)} y={H - 6} fill="var(--ink-faint)" fontSize="8.5"
           textAnchor="middle" fontFamily="JetBrains Mono, monospace">{data[i].month}</text>
       ))}
+      {hovIdx !== null && (
+        <g>
+          <rect x={tx} y={ty} width={TW} height={TH} rx="2"
+            fill="var(--panel)" stroke="var(--line-2)" strokeWidth="1" />
+          <text x={tx + TW / 2} y={ty + 11} fill="var(--ink-faint)" fontSize="7.5"
+            textAnchor="middle" fontFamily="JetBrains Mono, monospace">
+            {data[hovIdx].month}
+          </text>
+          <text x={tx + TW / 2} y={ty + 23} fill="var(--blueprint)" fontSize="9.5"
+            textAnchor="middle" fontFamily="JetBrains Mono, monospace">
+            {data[hovIdx].v >= 1000 ? `${(data[hovIdx].v / 1000).toFixed(2)}k` : data[hovIdx].v}
+          </text>
+        </g>
+      )}
     </svg>
   );
 }

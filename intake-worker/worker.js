@@ -38,14 +38,14 @@ export default {
 
     if (!res.ok) {
       const err = await res.text();
-      return new Response(JSON.stringify({ error: err }), {
-        status: res.status,
+      return new Response(JSON.stringify({ reply: `[debug] Gemini ${res.status}: ${err}` }), {
+        status: 200,
         headers: { ...CORS, 'Content-Type': 'application/json' },
       });
     }
 
     const data = await res.json();
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text ?? `[debug] unexpected shape: ${JSON.stringify(data)}`;
 
     return new Response(JSON.stringify({ reply }), {
       headers: { ...CORS, 'Content-Type': 'application/json' },

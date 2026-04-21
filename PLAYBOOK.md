@@ -32,16 +32,32 @@ The deliverable is never just code. It is a running system with:
 ## Technology Stack
 
 ```
-Orchestration   →  n8n (self-hosted)
-Language        →  Python 3.11+
-API layer       →  FastAPI
-LLM             →  OpenAI GPT-4 / Claude
-Memory & RAG    →  LangChain + Pinecone / ChromaDB
-Comms           →  Twilio (voice + SMS), WhatsApp Business API
-Version control →  GitHub (organisation: lombard-systems)
-Deployment      →  DigitalOcean VPS / Railway / Render
-Dashboard       →  Custom HTML/JS (GitHub Pages) or Grafana
+Client workflow layer  →  n8n (simple flows, visible to clients)
+Complex logic / agents →  Python 3.11+
+Agent orchestration    →  LangGraph
+API layer              →  FastAPI
+LLM                    →  OpenAI GPT-4 / Claude
+Memory & RAG           →  LangChain + Pinecone / ChromaDB
+Data layer             →  Firestore (logs, state, heartbeats)
+Comms                  →  Twilio (voice + SMS), WhatsApp Business API
+Version control        →  GitHub (organisation: lombard-systems)
+Deployment             →  DigitalOcean VPS / Railway / Render
+Dashboard              →  Custom HTML/JS (GitHub Pages + Firebase Auth)
+Internal ops           →  CEO Bot (see below)
 ```
+
+### n8n vs Python — when to use which
+
+| Situation | Use |
+|---|---|
+| Client wants to see and understand the flow | n8n |
+| Simple linear trigger → action → notify | n8n |
+| Needs complex branching, memory, or reasoning | Python |
+| RAG pipeline, LLM-based qualifier, intake agent | Python |
+| CEO Bot / internal orchestrator | Python (LangGraph) |
+| Anything you need to write tests for | Python |
+
+n8n stays as the *visible* client-facing layer. Python runs the intelligence underneath and above it.
 
 ---
 
@@ -68,6 +84,86 @@ GitHub stores and versions the code. It does **not** run the code.
 - Python/FastAPI endpoints
 - Twilio webhook receivers
 - Anything that requires a persistent server process
+
+---
+
+## The CEO Bot — Internal Orchestrator
+
+The CEO Bot is a LangGraph-based Python agent that manages all active client systems. It is not a client deliverable — it is internal infrastructure. Revan oversees it; it does the operational work.
+
+### What it does
+
+- Monitors every client system via Firestore heartbeat records
+- Detects failures, slow runs, or missing heartbeats
+- Takes autonomous action on low-stakes events (log, tag, restart)
+- Surfaces high-stakes decisions to Revan for approval before acting
+- Sends weekly status reports
+
+### Architecture
+
+```
+Revan
+  ↕ (WhatsApp or private dashboard)
+CEO Bot  —  LangGraph agent  —  Python
+  │
+  ├── check_system_health(client_id)
+  │     reads Firestore: last_run, status, error_count
+  │
+  ├── get_recent_errors(client_id, workflow_id)
+  │     fetches logs from Railway API or VPS via SSH
+  │
+  ├── trigger_redeployment(client_id)
+  │     calls Railway deploy hook or runs git pull + restart via paramiko
+  │
+  ├── alert_client(client_id, message)
+  │     sends WhatsApp message via Twilio to client's number
+  │     — requires Revan approval before sending
+  │
+  ├── create_github_issue(repo, title, body)
+  │     logs the failure as a tracked issue in the client's repo
+  │
+  └── generate_weekly_report()
+        summarises all client system health for the week
+        → WhatsApp message to Revan every Monday 08:00
+```
+
+### Decision tiers
+
+Not all decisions are equal. The bot operates on three tiers:
+
+| Tier | Examples | Bot action |
+|---|---|---|
+| Auto | Workflow failed, retried and recovered | Log it, tag in Firestore, no alert |
+| Notify | Workflow failed 3x in a row, no recovery | WhatsApp Revan immediately |
+| Approve | Client-facing alert needed, redeployment | Bot drafts message, Revan confirms before send |
+
+Revan replies via WhatsApp: `approve`, `skip`, or rewrites the message. The bot acts on the response.
+
+### Why WhatsApp as the interface
+
+WhatsApp is already the primary communication channel for SA-based clients and for Revan personally. Using it as the CEO Bot interface means no separate app, no dashboard to check — the bot operates in the same channel as everything else. It surfaces information when needed and waits for input when a decision is required.
+
+### Repo structure for the CEO Bot
+
+```
+lombard-systems/ceo-bot/
+├── README.md
+├── .env.example
+├── agent/
+│   ├── main.py          # LangGraph agent entry point
+│   ├── tools.py         # All tool definitions
+│   ├── memory.py        # Firestore read/write helpers
+│   └── prompts.py       # System prompt and decision framing
+├── scheduler/
+│   └── cron.py          # Heartbeat checks, weekly report trigger
+├── tests/
+│   └── test_tools.py
+└── requirements.txt
+```
+
+### This is also a portfolio piece
+
+The CEO Bot is the best demonstration of what autonomous systems can do. A future version of the portfolio site can reference it directly: "This site — and every client system I manage — is monitored by an AI operations agent I built myself."
 
 ---
 
@@ -433,6 +529,7 @@ Pricing is scope-based. First conversation is free. No retainer until the first 
 | DigitalOcean | VPS hosting | digitalocean.com |
 | Certbot | Free SSL certificates | certbot.eff.org |
 | Pinecone | Vector DB for RAG | pinecone.io |
+| LangGraph | Agent orchestration (CEO Bot) | langchain-ai.github.io/langgraph |
 | Firebase / Firestore | Data layer + Auth + Hosting | firebase.google.com |
 | Twilio | Voice + SMS | twilio.com |
 | WhatsApp Business API | Messaging | business.whatsapp.com |

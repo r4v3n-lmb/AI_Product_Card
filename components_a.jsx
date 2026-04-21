@@ -88,26 +88,31 @@ function Hero() {
             </button>
           </div>
         </div>
-        <aside className="hero-card">
-          <div className="title">Identity / Profile</div>
-          <dl>
-            {profile.primary.map((item) => (
-              <React.Fragment key={item.k}>
-                <dt>{item.k}</dt>
-                <dd style={item.tone === 'ok' ? { color: 'var(--ok)' } : undefined}>{item.v}</dd>
-              </React.Fragment>
-            ))}
-          </dl>
-          <div className="divider"></div>
-          <dl>
-            {profile.secondary.map((item) => (
-              <React.Fragment key={item.k}>
-                <dt>{item.k}</dt>
-                <dd>{item.v}</dd>
-              </React.Fragment>
-            ))}
-          </dl>
-        </aside>
+        <div className="hero-aside">
+          <button className="tour-trigger" onClick={() => window.dispatchEvent(new Event('start-tour'))}>
+            Take The Tour <span className="arrow">→</span>
+          </button>
+          <aside className="hero-card">
+            <div className="title">Identity / Profile</div>
+            <dl>
+              {profile.primary.map((item) => (
+                <React.Fragment key={item.k}>
+                  <dt>{item.k}</dt>
+                  <dd style={item.tone === 'ok' ? { color: 'var(--ok)' } : undefined}>{item.v}</dd>
+                </React.Fragment>
+              ))}
+            </dl>
+            <div className="divider"></div>
+            <dl>
+              {profile.secondary.map((item) => (
+                <React.Fragment key={item.k}>
+                  <dt>{item.k}</dt>
+                  <dd>{item.v}</dd>
+                </React.Fragment>
+              ))}
+            </dl>
+          </aside>
+        </div>
       </div>
       <div className="dim-line">
         <span>⟨ A-01</span>

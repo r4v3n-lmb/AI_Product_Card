@@ -120,6 +120,15 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
   align-items: end;
   position: relative;
 }
+.hero-aside { display: flex; flex-direction: column; justify-content: space-between; align-self: stretch; }
+.tour-trigger {
+  align-self: flex-end;
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 10px 16px; border: 1px solid var(--blueprint);
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--blueprint); background: transparent; transition: all 0.15s ease;
+}
+.tour-trigger:hover { background: rgba(122,184,212,0.06); color: var(--ink); border-color: var(--ink-dim); }
 .hero h1 {
   font-family: 'Inter Tight', sans-serif;
   font-size: clamp(48px, 8vw, 104px);
@@ -412,6 +421,32 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 .footer-bar .dots { display: flex; gap: 4px; }
 .footer-bar .dot { width: 4px; height: 4px; background: var(--line-3); }
 
+/* --- Tour --- */
+.tour-spotlight {
+  position: fixed; z-index: 198; pointer-events: none;
+  border: 1px solid var(--blueprint);
+  transition: top 0.4s ease, left 0.4s ease, width 0.4s ease, height 0.4s ease;
+}
+.tour-tooltip {
+  position: fixed; z-index: 200; width: 340px;
+  background: #07090b; border: 1px solid var(--blueprint);
+  padding: 20px;
+}
+.tour-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.tour-title { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--blueprint); }
+.tour-close { font-size: 11px; color: var(--ink-faint); letter-spacing: 0.1em; transition: color 0.15s ease; }
+.tour-close:hover { color: var(--ink); }
+.tour-body { font-size: 12px; color: var(--ink-dim); line-height: 1.7; margin-bottom: 20px; }
+.tour-footer { display: flex; justify-content: space-between; align-items: center; }
+.tour-progress { display: flex; gap: 5px; align-items: center; }
+.tour-pip { width: 16px; height: 2px; background: var(--line-3); transition: background 0.2s ease; }
+.tour-pip.active { background: var(--blueprint); }
+.tour-nav { display: flex; gap: 8px; }
+.tour-btn-nav { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; padding: 6px 12px; border: 1px solid var(--line-3); color: var(--ink-faint); transition: all 0.15s ease; }
+.tour-btn-nav:hover { color: var(--ink); border-color: var(--ink-dim); }
+.tour-btn-nav.primary { border-color: var(--blueprint); color: var(--blueprint); }
+.tour-btn-nav.primary:hover { background: rgba(122,184,212,0.08); }
+
 /* --- Section nav --- */
 .section-nav { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); z-index: 60; display: flex; flex-direction: column; gap: 12px; }
 .nav-dot { width: 6px; height: 6px; border: 1px solid var(--line-3); display: block; transition: all 0.2s ease; background: transparent; padding: 0; }
@@ -462,6 +497,8 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
   .stack-cell { border-right: 0 !important; }
   .chat-float { width: calc(100vw - 32px); right: 16px; bottom: 16px; }
   .section-nav { display: none; }
+  .tour-trigger { display: none; }
+  .tour-tooltip { width: calc(100vw - 32px); left: 16px !important; right: 16px; }
   .frame { padding: 16px; }
   .hero h1 { font-size: 48px; }
 }

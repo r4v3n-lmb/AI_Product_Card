@@ -194,6 +194,97 @@ function FooterBar() {
   );
 }
 
+/* ============ TOUR ============ */
+const TOUR_STEPS = [
+  { target: '.hero h1',      title: 'IDENT · 01',        pos: 'bottom', body: 'Revan Lombard — AI Solutions Architect, Johannesburg. I design and deploy autonomous ops systems for SMBs that need to run 24/7 without a human in the loop.' },
+  { target: '.terminal',     title: 'STACK BOOT · 02',   pos: 'right',  body: 'Stack boot sequence. Every [✓] is a live module — n8n self-hosted, Python runners, OpenAI, LangChain, RAG vector store, Twilio, FastAPI. Not a demo stack.' },
+  { target: '.stack-grid',   title: 'CAPABILITIES · 02', pos: 'left',   body: 'Six capability layers, each with a specific production role. Hover any cell to reveal the exact tools running underneath.' },
+  { target: '#s03',          title: 'BUILD CATALOG · 03',pos: 'bottom', body: 'Five production systems across Logistics, Retention, High-Volume, and High-Ticket sectors. Click any card to expand the full flow diagram and tech stack.' },
+  { target: '#s04',          title: 'PHILOSOPHY · 04',   pos: 'bottom', body: 'Three non-negotiable build principles: ship repos not decks, build observable systems not chatbots, localise by default.' },
+  { target: '.heatmap-wrap', title: 'PROOF · 05',        pos: 'right',  body: '52 weeks of commit activity. The testimonial to the right is from a live deployment — a towing dispatcher running at 2am in the Western Cape.' },
+  { target: '.contact',      title: 'ENGAGE · 06',       pos: 'top',    body: 'Fastest route in: WhatsApp or a 20-min diagnostic on Calendly. Brief me on the friction — I\'ll return with an architecture sketch, not a proposal deck.' },
+  { target: '.floater',      title: 'INTAKE AGENT',      pos: 'top',    body: 'The AI agent bottom-right is live. It knows the build catalog, pricing logic, and timelines. Use it to scope your project before booking a call.' },
+];
+
+function Tour() {
+  const [active, setActive] = useState(false);
+  const [step, setStep] = useState(0);
+  const [rect, setRect] = useState(null);
+  const total = TOUR_STEPS.length;
+
+  useEffect(() => {
+    const handler = () => { setStep(0); setActive(true); };
+    window.addEventListener('start-tour', handler);
+    return () => window.removeEventListener('start-tour', handler);
+  }, []);
+
+  useEffect(() => {
+    if (!active) return;
+    const el = document.querySelector(TOUR_STEPS[step].target);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const update = () => {
+      const r = el.getBoundingClientRect();
+      setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+    };
+    const t = setTimeout(update, 550);
+    window.addEventListener('scroll', update, { passive: true });
+    return () => { clearTimeout(t); window.removeEventListener('scroll', update); };
+  }, [step, active]);
+
+  const close = () => { setActive(false); setRect(null); };
+  const next  = () => step < total - 1 ? setStep(s => s + 1) : close();
+  const prev  = () => setStep(s => s - 1);
+
+  if (!active) return null;
+
+  const { title, body, pos } = TOUR_STEPS[step];
+  const PAD = 12; const TW = 340; const TH = 230; const GAP = 16;
+  const vw = window.innerWidth; const vh = window.innerHeight;
+
+  const spotStyle = rect ? {
+    top:    rect.top  - PAD,
+    left:   rect.left - PAD,
+    width:  rect.width  + PAD * 2,
+    height: rect.height + PAD * 2,
+    boxShadow: '0 0 0 9999px rgba(7,9,11,0.88)',
+  } : { top: -9999, left: -9999, width: 0, height: 0 };
+
+  let tx = GAP, ty = GAP;
+  if (rect) {
+    if (pos === 'bottom') { ty = Math.min(rect.top + rect.height + PAD + GAP, vh - TH - GAP); tx = Math.max(GAP, Math.min(rect.left, vw - TW - GAP)); }
+    else if (pos === 'top') { ty = Math.max(GAP, rect.top - PAD - TH - GAP); tx = Math.max(GAP, Math.min(rect.left, vw - TW - GAP)); }
+    else if (pos === 'right') { ty = Math.max(GAP, Math.min(rect.top, vh - TH - GAP)); tx = Math.min(rect.left + rect.width + PAD + GAP, vw - TW - GAP); }
+    else { ty = Math.max(GAP, Math.min(rect.top, vh - TH - GAP)); tx = Math.max(GAP, rect.left - PAD - TW - GAP); }
+  }
+
+  return (
+    <>
+      <div className="tour-spotlight" style={spotStyle} />
+      <div className="tour-tooltip" style={{ top: ty, left: tx }}>
+        <div className="tour-header">
+          <span className="tour-title">{title}</span>
+          <button className="tour-close" onClick={close}>✕ SKIP</button>
+        </div>
+        <p className="tour-body">{body}</p>
+        <div className="tour-footer">
+          <div className="tour-progress">
+            {Array.from({ length: total }).map((_, i) => (
+              <div key={i} className={`tour-pip ${i === step ? 'active' : ''}`} />
+            ))}
+          </div>
+          <div className="tour-nav">
+            {step > 0 && <button className="tour-btn-nav" onClick={prev}>← PREV</button>}
+            <button className="tour-btn-nav primary" onClick={next}>
+              {step < total - 1 ? 'NEXT →' : 'FINISH'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
 /* ============ SECTION NAV ============ */
 function SectionNav() {
   const [active, setActive] = useState('');
@@ -280,6 +371,7 @@ function App() {
 
       <FooterBar />
       <ChatFloater />
+      <Tour />
       <SectionNav />
       <ScrollTop />
     </div>

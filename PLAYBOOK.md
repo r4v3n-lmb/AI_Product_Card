@@ -208,6 +208,162 @@ This is the lowest-friction option for non-technical clients.
 
 ---
 
+## Managing Live Systems (Post-Deployment)
+
+Once a system is live, I retain admin access to the deployment and repo. This is what day-to-day management looks like.
+
+### Monitoring
+
+**n8n (self-hosted or Cloud)**
+The n8n UI has a full execution dashboard built in. Every workflow run is logged — inputs, outputs, errors, duration, retry state. This is the primary monitoring tool for automation flows.
+
+Access: `https://ops.client.co.za` (or n8n Cloud URL)
+What you see: execution history, failed runs, retry queue, active workflows
+
+**Railway / Render**
+Both platforms have a live log viewer in their web dashboard. Tail logs, view deploy history, roll back to a previous deploy if needed. No SSH required.
+
+**DigitalOcean VPS**
+```bash
+ssh root@[server-ip]
+journalctl -u n8n --follow          # n8n logs
+journalctl -u myapi --follow        # FastAPI logs
+docker compose logs -f              # if running via Docker Compose
+```
+
+**Alerts**
+Set up n8n's built-in error alerting: on any workflow failure → send a WhatsApp or Slack message to yourself. This means you find out about broken flows before the client does.
+
+```
+n8n Error Trigger → HTTP Request (POST to your WhatsApp webhook)
+```
+
+### Making Updates
+
+**Code changes (Python API, dashboard):**
+```bash
+# Make change locally, test it, then:
+git add .
+git commit -m "fix: [what and why]"
+git push origin main
+# Railway/Render: auto-deploys on push (configure in platform settings)
+# VPS: SSH in and run:
+git pull && docker compose restart api
+```
+
+**n8n workflow changes:**
+1. Log into the n8n UI on the live server (or n8n Cloud)
+2. Make the change directly in the UI
+3. Activate the updated workflow
+4. Export the updated JSON and commit it to the repo:
+   - n8n UI → workflow → ⋮ → Export
+   - `cp ~/Downloads/workflow.json ./workflows/[name].json`
+   - `git add . && git commit -m "update: [workflow name] — [what changed]"`
+
+This keeps the repo in sync with what is actually running.
+
+### Managing Multiple Clients
+
+As the number of clients grows, you need a way to see all systems from one place without logging into each one individually.
+
+**Practical approach — a private control dashboard:**
+
+Each client system writes a heartbeat to a shared Firestore collection every time it runs:
+
+```json
+{
+  "client": "towing-co-wc",
+  "workflow": "dispatch-intake",
+  "status": "ok",
+  "last_run": "2026-04-21T14:32:00Z",
+  "jobs_today": 47,
+  "errors_today": 1
+}
+```
+
+A private HTML dashboard (GitHub Pages, gated behind Firebase Auth) reads this collection and shows the health of every client system on one screen. You open one URL and see everything.
+
+This is your control room. It is not visible to clients — it is your internal ops view.
+
+---
+
+## Hosting Stack Decision Guide
+
+Not all systems need the same infrastructure. Use this to decide what to deploy where.
+
+### When GitHub Pages alone is enough
+
+- The deliverable is purely a static dashboard reading from an API or Firestore
+- A documentation site
+- A status page that shows pre-generated data
+
+GitHub Pages serves HTML/CSS/JS files. It cannot run server-side code, cannot receive webhooks, and cannot run persistent processes.
+
+### When you need a server (VPS or Railway)
+
+Almost always. Any system that does one of the following needs a real server:
+
+- Receives a webhook from Twilio, WhatsApp, or any external service
+- Runs n8n workflows (n8n is a Node.js process that runs continuously)
+- Hosts a Python/FastAPI endpoint
+- Makes scheduled/cron-based calls
+- Maintains a persistent connection or queue
+
+**DigitalOcean Droplet** — best for production systems, multiple services on one box, clients who need a fixed server IP (e.g., for IP whitelisting with external APIs).
+
+**Railway** — best for Python APIs when you want zero server management. Deploys from GitHub on push. Good for early-stage or lower-traffic systems.
+
+**n8n Cloud** — best for clients who are non-technical and just need the automation to run. They pay n8n directly; you configure it. No server to manage.
+
+### When Firebase is the right addition
+
+Firebase is not a replacement for a server. It is a data and auth layer that works well alongside GitHub Pages for the dashboard side of a system.
+
+**Use Firestore when:**
+- You want the dashboard to update in real time without polling a custom API
+- n8n needs to persist data (job logs, customer records, state) without setting up a database server
+- You want to store run history in a way the client can query or export
+
+**Use Firebase Auth when:**
+- The client dashboard should be login-gated (only authorised users can see it)
+- You are building a multi-user system where different staff see different data
+
+**Use Firebase Hosting when:**
+- You want a custom domain on the dashboard with SSL, and do not want to manage Nginx
+- Functionally the same as GitHub Pages but with tighter Firebase integration
+
+### Typical Architecture by System Type
+
+**Simple automation (single workflow, SMS/WhatsApp):**
+```
+Twilio webhook → n8n on DigitalOcean → OpenAI → SMS reply
+Dashboard: n8n UI (no separate dashboard needed)
+```
+
+**Client-facing system with dashboard:**
+```
+Trigger → n8n on VPS → writes to Firestore
+Dashboard: GitHub Pages → reads Firestore → Firebase Auth gate
+```
+
+**API-heavy system (RAG, intake, qualifier):**
+```
+Web form → FastAPI on Railway → LangChain + OpenAI → Calendly
+Data: Firestore or Railway PostgreSQL
+```
+
+**Full production system:**
+```
+Trigger layer: Twilio / WhatsApp / Web
+Orchestration: n8n on DigitalOcean (Docker)
+API layer: FastAPI on same VPS or Railway
+Data: Firestore (logs + records) + .env secrets
+Dashboard: GitHub Pages + Firebase Auth + Firestore reads
+Monitoring: n8n error trigger → WhatsApp alert to me
+```
+
+---
+
 ## Repo → Client Handover (GitHub Specifically)
 
 The repo lives under `lombard-systems` during development.
@@ -277,6 +433,7 @@ Pricing is scope-based. First conversation is free. No retainer until the first 
 | DigitalOcean | VPS hosting | digitalocean.com |
 | Certbot | Free SSL certificates | certbot.eff.org |
 | Pinecone | Vector DB for RAG | pinecone.io |
+| Firebase / Firestore | Data layer + Auth + Hosting | firebase.google.com |
 | Twilio | Voice + SMS | twilio.com |
 | WhatsApp Business API | Messaging | business.whatsapp.com |
 | Calendly | Booking | calendly.com/revan_lombard |

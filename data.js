@@ -98,6 +98,28 @@ window.CATALOG = [
 ];
 
 
+window.METRICS = {
+  kpis: [
+    { label: 'AVG RESPONSE',   value: '420',   unit: 'ms' },
+    { label: 'UPTIME 30D',     value: '99.94', unit: '%'  },
+    { label: 'LIVE WORKFLOWS', value: '18',    unit: ''   },
+    { label: 'HRS SAVED / MO', value: '847',   unit: 'hr' },
+  ],
+  outcomes: [
+    { label: 'Order Accuracy',        value: 95 },
+    { label: 'AI Response Coverage',  value: 88 },
+    { label: 'Queries Auto-Resolved', value: 82 },
+    { label: 'Unqualified Calls Cut', value: 70 },
+    { label: 'Rebook Rate Lift',      value: 38 },
+  ],
+  volume: [
+    { month: 'May', v: 248  }, { month: 'Jun', v: 312  }, { month: 'Jul', v: 289  },
+    { month: 'Aug', v: 445  }, { month: 'Sep', v: 523  }, { month: 'Oct', v: 612  },
+    { month: 'Nov', v: 748  }, { month: 'Dec', v: 891  }, { month: 'Jan', v: 1024 },
+    { month: 'Feb', v: 1186 }, { month: 'Mar', v: 1348 }, { month: 'Apr', v: 1567 },
+  ],
+};
+
 window.TERMINAL_SCRIPT = [
   { t: 'prompt', s: '> whoami' },
   { t: 'out',    s: 'revan.lombard :: ai-solutions-architect' },

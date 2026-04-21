@@ -201,8 +201,9 @@ const TOUR_STEPS = [
   { target: '.stack-grid',   title: 'CAPABILITIES · 02', pos: 'left',   body: 'Six capability layers, each with a specific production role. Hover any cell to reveal the exact tools running underneath.' },
   { target: '#s03',          title: 'BUILD CATALOG · 03',pos: 'bottom', body: 'Five production systems across Logistics, Retention, High-Volume, and High-Ticket sectors. Click any card to expand the full flow diagram and tech stack.' },
   { target: '#s04',          title: 'PHILOSOPHY · 04',   pos: 'bottom', body: 'Three non-negotiable build principles: ship repos not decks, build observable systems not chatbots, localise by default.' },
-  { target: '.heatmap-wrap', title: 'PROOF · 05',        pos: 'right',  body: '52 weeks of commit activity. The testimonial to the right is from a live deployment — a towing dispatcher running at 2am in the Western Cape.' },
-  { target: '.contact',      title: 'ENGAGE · 06',       pos: 'top',    body: 'Fastest route in: WhatsApp or a 20-min diagnostic on Calendly. Brief me on the friction — I\'ll return with an architecture sketch, not a proposal deck.' },
+  { target: '.metrics-dash', title: 'METRICS · 05',      pos: 'bottom', body: 'Live performance data across all deployed systems — outcome precision, AI response coverage, and 12-month execution volume, all grounded in real build stats.' },
+  { target: '.heatmap-wrap', title: 'PROOF · 06',        pos: 'right',  body: '52 weeks of commit activity. The testimonial to the right is from a live deployment — a towing dispatcher running at 2am in the Western Cape.' },
+  { target: '.contact',      title: 'ENGAGE · 07',       pos: 'top',    body: 'Fastest route in: WhatsApp or a 20-min diagnostic on Calendly. Brief me on the friction — I\'ll return with an architecture sketch, not a proposal deck.' },
   { target: '.floater',      title: 'INTAKE AGENT',      pos: 'top',    body: 'The AI agent bottom-right is live. It knows the build catalog, pricing logic, and timelines. Use it to scope your project before booking a call.' },
 ];
 
@@ -313,7 +314,7 @@ function Tour() {
 /* ============ SECTION NAV ============ */
 function SectionNav() {
   const [active, setActive] = useState('');
-  const ids = ['s02','s03','s04','s05','s06'];
+  const ids = ['s02','s03','s04','s05','s06','s07'];
   useEffect(() => {
     const obs = new IntersectionObserver(
       entries => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); }),
@@ -384,13 +385,18 @@ function App() {
         <Philosophy />
       </section>
 
-      <section id="s05" className="reveal-section" data-screen-label="05 Proof">
-        <SectionLabel num="05" title="Proof of Work · Field Signal" coord="L-01 / M-10" />
+      <section id="s05" className="reveal-section" data-screen-label="05 Metrics">
+        <SectionLabel num="05" title="System Metrics · Performance Intelligence" coord="K-07 / L-14" />
+        <MetricsDash />
+      </section>
+
+      <section id="s06" className="reveal-section" data-screen-label="06 Proof">
+        <SectionLabel num="06" title="Proof of Work · Field Signal" coord="L-01 / M-10" />
         <ProofGrid />
       </section>
 
-      <section id="s06" className="reveal-section" data-screen-label="06 Contact">
-        <SectionLabel num="06" title="Engagement · Direct Channels" coord="N-01 / N-08" />
+      <section id="s07" className="reveal-section" data-screen-label="07 Contact">
+        <SectionLabel num="07" title="Engagement · Direct Channels" coord="N-01 / N-08" />
         <Contact />
       </section>
 

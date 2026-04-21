@@ -160,4 +160,98 @@ function ProofGrid() {
   );
 }
 
-Object.assign(window, { CatalogCard, Elite10, Philosophy, ProofGrid, MermaidDiagram });
+/* ============ METRICS DASHBOARD ============ */
+function KpiCard({ label, value, unit }) {
+  return (
+    <div className="kpi-card">
+      <div className="kpi-value serif">{value}<span className="kpi-unit">{unit}</span></div>
+      <div className="kpi-label">{label}</div>
+    </div>
+  );
+}
+
+function OutcomeChart({ data, visible }) {
+  return (
+    <div className="outcome-chart">
+      {data.map((d, i) => (
+        <div key={i} className="outcome-row">
+          <div className="outcome-label">{d.label}</div>
+          <div className="outcome-track">
+            <div className="outcome-bar" style={{
+              width: visible ? `${d.value}%` : '0%',
+              transitionDelay: `${i * 130}ms`,
+            }} />
+          </div>
+          <div className="outcome-val">{d.value}%</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function VolumeChart({ data }) {
+  const W = 480, H = 190;
+  const pad = { t: 20, r: 20, b: 34, l: 44 };
+  const pw = W - pad.l - pad.r;
+  const ph = H - pad.t - pad.b;
+  const CEIL = 1600;
+  const x = i => pad.l + (i / (data.length - 1)) * pw;
+  const y = v => pad.t + ph - (v / CEIL) * ph;
+  const pts = data.map((d, i) => [x(i), y(d.v)]);
+  const line = pts.map(([px, py], i) => `${i === 0 ? 'M' : 'L'}${px.toFixed(1)},${py.toFixed(1)}`).join(' ');
+  const area = `${line} L${x(data.length - 1).toFixed(1)},${(pad.t + ph).toFixed(1)} L${pad.l.toFixed(1)},${(pad.t + ph).toFixed(1)} Z`;
+  const gridVals = [0, 400, 800, 1200, 1600];
+  const xIdx = [0, 3, 6, 9, 11];
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="volume-svg" preserveAspectRatio="xMidYMid meet">
+      {gridVals.map(v => (
+        <g key={v}>
+          <line x1={pad.l} x2={W - pad.r} y1={y(v)} y2={y(v)} stroke="var(--line)" strokeWidth="1" />
+          <text x={pad.l - 5} y={y(v) + 4} fill="var(--ink-faint)" fontSize="8.5"
+            textAnchor="end" fontFamily="JetBrains Mono, monospace">
+            {v === 0 ? '0' : `${v / 1000}k`}
+          </text>
+        </g>
+      ))}
+      <path d={area} fill="rgba(122,184,212,0.07)" />
+      <path d={line} fill="none" stroke="var(--blueprint)" strokeWidth="1.5" strokeLinejoin="round" />
+      {pts.map(([px, py], i) => (
+        <circle key={i} cx={px} cy={py} r="2.5" fill="var(--bg)" stroke="var(--blueprint)" strokeWidth="1.5" />
+      ))}
+      {xIdx.map(i => (
+        <text key={i} x={x(i)} y={H - 6} fill="var(--ink-faint)" fontSize="8.5"
+          textAnchor="middle" fontFamily="JetBrains Mono, monospace">{data[i].month}</text>
+      ))}
+    </svg>
+  );
+}
+
+function MetricsDash() {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.2 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+  const m = window.METRICS;
+  return (
+    <div className="metrics-dash" ref={ref}>
+      <div className="kpi-row">
+        {m.kpis.map((k, i) => <KpiCard key={i} {...k} />)}
+      </div>
+      <div className="metrics-charts">
+        <div className="chart-panel">
+          <div className="chart-label">BUILD OUTCOMES · PRECISION METRICS</div>
+          <OutcomeChart data={m.outcomes} visible={visible} />
+        </div>
+        <div className="chart-panel">
+          <div className="chart-label">WORKFLOW EXECUTION · 12-MONTH VOLUME</div>
+          <VolumeChart data={m.volume} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+Object.assign(window, { CatalogCard, Elite10, Philosophy, ProofGrid, MermaidDiagram, MetricsDash });

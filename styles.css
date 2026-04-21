@@ -157,7 +157,7 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
   background: var(--panel);
   font-size: 11px;
   position: relative;
-  min-height: 420px;
+  min-height: 480px;
   display: flex;
   flex-direction: column;
 }

@@ -190,6 +190,7 @@ window.PROFILE = {
     { k: 'STACK', v: 'n8n · Python · FastAPI' },
     { k: 'DATA', v: 'Firebase · Firestore' },
     { k: 'FRONTEND', v: 'HTML · CSS · JS' },
+    { k: 'VISUALISATION', v: 'SVG · Chart.js · D3' },
     { k: 'LEAD TIME', v: '2-wk sprint cycle' },
   ],
 };

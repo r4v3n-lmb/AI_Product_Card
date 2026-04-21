@@ -380,25 +380,20 @@ function AdoptionChart({ data, visible }) {
 
 /* ============ AI IMPACT CHART (Ring Gauges) ============ */
 function RingGauge({ pct, visible, delay, hovered }) {
-  const R = 21, sw = 5;
+  const R = 20, sw = 5;
   const circ = 2 * Math.PI * R;
   const offset = visible ? circ - (pct / 100) * circ : circ;
   const color = hovered ? 'var(--accent)' : 'var(--ok)';
   return (
-    <svg width="54" height="54" viewBox="0 0 54 54" style={{ flexShrink: 0 }}>
-      <circle cx="27" cy="27" r={R} fill="none" stroke="var(--line-2)" strokeWidth={sw} />
-      <circle cx="27" cy="27" r={R} fill="none"
+    <svg width="50" height="50" viewBox="0 0 50 50" style={{ flexShrink: 0 }}>
+      <circle cx="25" cy="25" r={R} fill="none" stroke="var(--line-2)" strokeWidth={sw} />
+      <circle cx="25" cy="25" r={R} fill="none"
         stroke={color} strokeWidth={sw}
         strokeDasharray={circ.toFixed(2)}
         strokeDashoffset={offset.toFixed(2)}
         strokeLinecap="round"
-        transform="rotate(-90 27 27)"
+        transform="rotate(-90 25 25)"
         style={{ transition: `stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1) ${delay}ms, stroke 0.15s` }} />
-      <text x="27" y="31" textAnchor="middle"
-        fill={color} fontSize="10" fontFamily="JetBrains Mono, monospace"
-        style={{ transition: 'fill 0.15s' }}>
-        {pct}%
-      </text>
     </svg>
   );
 }
@@ -413,6 +408,10 @@ function ImpactChart({ data, visible }) {
           onMouseLeave={() => setHovRow(null)}>
           <RingGauge pct={d.pct} visible={visible} delay={i * 120} hovered={hovRow === i} />
           <div className="impact-meta">
+            <div className="impact-pct"
+              style={hovRow === i ? { color: 'var(--accent)' } : undefined}>
+              {d.pct}%
+            </div>
             <div className="impact-label"
               style={hovRow === i ? { color: 'var(--ink)' } : undefined}>
               {d.label}

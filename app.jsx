@@ -250,12 +250,37 @@ function Tour() {
     boxShadow: '0 0 0 9999px rgba(7,9,11,0.88)',
   } : { top: -9999, left: -9999, width: 0, height: 0 };
 
+  // Spotlight outer bounds (element + padding)
+  const sb = rect ? {
+    top:    rect.top    - PAD,
+    left:   rect.left   - PAD,
+    right:  rect.left   + rect.width  + PAD,
+    bottom: rect.top    + rect.height + PAD,
+  } : null;
+
+  // Available clear space in each direction from the spotlight edge
+  const space = sb ? {
+    bottom: vh - sb.bottom - GAP,
+    top:    sb.top         - GAP,
+    right:  vw - sb.right  - GAP,
+    left:   sb.left        - GAP,
+  } : null;
+
+  // Pick preferred direction; fall back to whichever side has the most room
+  const needed = { bottom: TH, top: TH, right: TW, left: TW };
+  const dir = (space && space[pos] >= needed[pos])
+    ? pos
+    : space ? Object.entries(space).sort((a, b) => b[1] - a[1])[0][0] : 'bottom';
+
   let tx = GAP, ty = GAP;
-  if (rect) {
-    if (pos === 'bottom') { ty = Math.min(rect.top + rect.height + PAD + GAP, vh - TH - GAP); tx = Math.max(GAP, Math.min(rect.left, vw - TW - GAP)); }
-    else if (pos === 'top') { ty = Math.max(GAP, rect.top - PAD - TH - GAP); tx = Math.max(GAP, Math.min(rect.left, vw - TW - GAP)); }
-    else if (pos === 'right') { ty = Math.max(GAP, Math.min(rect.top, vh - TH - GAP)); tx = Math.min(rect.left + rect.width + PAD + GAP, vw - TW - GAP); }
-    else { ty = Math.max(GAP, Math.min(rect.top, vh - TH - GAP)); tx = Math.max(GAP, rect.left - PAD - TW - GAP); }
+  if (sb) {
+    if (dir === 'bottom') { ty = sb.bottom + GAP; tx = Math.max(GAP, Math.min(rect.left, vw - TW - GAP)); }
+    else if (dir === 'top') { ty = sb.top - TH - GAP; tx = Math.max(GAP, Math.min(rect.left, vw - TW - GAP)); }
+    else if (dir === 'right') { tx = sb.right + GAP; ty = Math.max(GAP, Math.min(rect.top, vh - TH - GAP)); }
+    else { tx = sb.left - TW - GAP; ty = Math.max(GAP, Math.min(rect.top, vh - TH - GAP)); }
+    // Final viewport clamp
+    tx = Math.max(GAP, Math.min(tx, vw - TW - GAP));
+    ty = Math.max(GAP, Math.min(ty, vh - TH - GAP));
   }
 
   return (

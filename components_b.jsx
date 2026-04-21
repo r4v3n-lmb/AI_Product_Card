@@ -170,33 +170,76 @@ function KpiCard({ label, value, unit }) {
   );
 }
 
-function OutcomeChart({ data, visible }) {
-  const [hovRow, setHovRow] = useState(null);
+function RadarChart({ data, visible }) {
+  const [hovIdx, setHovIdx] = useState(null);
+  const W = 400, H = 290;
+  const cx = W / 2, cy = H / 2 + 10;
+  const R = 105;
+  const n = data.length;
+  const ang = i => (i * 2 * Math.PI / n) - Math.PI / 2;
+  const pt = (i, frac) => [cx + frac * R * Math.cos(ang(i)), cy + frac * R * Math.sin(ang(i))];
+  const rings = [0.25, 0.5, 0.75, 1];
+  const ringPoly = f => Array.from({ length: n }, (_, i) => pt(i, f))
+    .map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+  const dataPts = data.map((d, i) => pt(i, d.value / 100));
+  const dataPoly = dataPts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+  const short = ['Order Acc.', 'AI Coverage', 'Auto-Resolved', 'Calls Filtered', 'Rebook Lift'];
   return (
-    <div className="outcome-chart">
-      {data.map((d, i) => (
-        <div key={i} className="outcome-row"
-          onMouseEnter={() => setHovRow(i)}
-          onMouseLeave={() => setHovRow(null)}>
-          <div className="outcome-label"
-            style={hovRow === i ? { color: 'var(--ink)' } : undefined}>
-            {d.label}
-          </div>
-          <div className="outcome-track"
-            style={hovRow === i ? { height: '6px' } : undefined}>
-            <div className="outcome-bar" style={{
-              width: visible ? `${d.value}%` : '0%',
-              transitionDelay: `${i * 130}ms`,
-              background: hovRow === i ? 'var(--accent)' : undefined,
-            }} />
-          </div>
-          <div className="outcome-val"
-            style={hovRow === i ? { color: 'var(--accent)' } : undefined}>
-            {d.value}%
-          </div>
-        </div>
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
+      {rings.map((f, ri) => (
+        <polygon key={ri} points={ringPoly(f)} fill="none"
+          stroke="var(--line)" strokeWidth="1" opacity={f === 1 ? 0.7 : 0.35} />
       ))}
-    </div>
+      {data.map((_, i) => {
+        const [x, y] = pt(i, 1);
+        return <line key={i} x1={cx} y1={cy} x2={x} y2={y}
+          stroke="var(--line)" strokeWidth="1" opacity="0.5" />;
+      })}
+      <text x={cx + 5} y={pt(0, 0.5)[1] + 3} fill="var(--ink-faint)"
+        fontSize="7" fontFamily="JetBrains Mono, monospace">50%</text>
+      <g style={{
+        transformOrigin: `${cx}px ${cy}px`,
+        transform: `scale(${visible ? 1 : 0})`,
+        transition: 'transform 1s cubic-bezier(0.34,1.56,0.64,1)',
+      }}>
+        <polygon points={dataPoly} fill="rgba(122,184,212,0.14)"
+          stroke="var(--blueprint)" strokeWidth="1.5" strokeLinejoin="round" />
+        {dataPts.map(([x, y], i) => (
+          <circle key={i} cx={x} cy={y}
+            r={hovIdx === i ? 6 : 3.5}
+            fill={hovIdx === i ? 'var(--blueprint)' : 'var(--bg)'}
+            stroke="var(--blueprint)" strokeWidth="1.5"
+            style={{ cursor: 'default' }}
+            onMouseEnter={() => setHovIdx(i)}
+            onMouseLeave={() => setHovIdx(null)} />
+        ))}
+      </g>
+      {data.map((_, i) => {
+        const [lx, ly] = pt(i, 1.3);
+        const anchor = lx > cx + 15 ? 'start' : lx < cx - 15 ? 'end' : 'middle';
+        return (
+          <text key={i} x={lx} y={ly + 3} textAnchor={anchor}
+            fill={hovIdx === i ? 'var(--ink)' : 'var(--ink-dim)'}
+            fontSize="8.5" fontFamily="JetBrains Mono, monospace"
+            style={{ transition: 'fill 0.15s' }}>
+            {short[i]}
+          </text>
+        );
+      })}
+      {hovIdx !== null && (
+        <g>
+          <text x={cx} y={cy - 2} textAnchor="middle" fill="var(--blueprint)"
+            fontSize="26" fontFamily="Inter Tight"
+            style={{ fontWeight: 700, letterSpacing: '-0.03em' }}>
+            {data[hovIdx].value}%
+          </text>
+          <text x={cx} y={cy + 13} textAnchor="middle" fill="var(--ink-faint)"
+            fontSize="7.5" fontFamily="JetBrains Mono, monospace">
+            {short[hovIdx]}
+          </text>
+        </g>
+      )}
+    </svg>
   );
 }
 
@@ -279,38 +322,87 @@ function VolumeChart({ data }) {
   );
 }
 
-/* ============ AI ADOPTION CHART ============ */
+/* ============ AI ADOPTION CHART (Lollipop) ============ */
 function AdoptionChart({ data, visible }) {
-  const [hovRow, setHovRow] = useState(null);
+  const [hovIdx, setHovIdx] = useState(null);
+  const W = 360, H = 232;
+  const pad = { l: 98, r: 44, t: 12, b: 18 };
+  const pw = W - pad.l - pad.r;
+  const rowH = (H - pad.t - pad.b) / data.length;
+  const ry = i => pad.t + i * rowH + rowH / 2;
+  const rx = pct => pad.l + (pct / 100) * pw;
   return (
-    <div className="adoption-chart">
-      {data.map((d, i) => (
-        <div key={i} className="adoption-row"
-          onMouseEnter={() => setHovRow(i)}
-          onMouseLeave={() => setHovRow(null)}>
-          <div className="adoption-sector"
-            style={hovRow === i ? { color: 'var(--ink)' } : undefined}>
-            {d.sector}
-          </div>
-          <div className="adoption-track"
-            style={hovRow === i ? { height: '7px' } : undefined}>
-            <div className="adoption-bar" style={{
-              width: visible ? `${d.pct}%` : '0%',
-              transitionDelay: `${i * 90}ms`,
-              background: hovRow === i ? 'var(--accent)' : undefined,
-            }} />
-          </div>
-          <div className="adoption-pct"
-            style={hovRow === i ? { color: 'var(--accent)' } : undefined}>
-            {d.pct}%
-          </div>
-        </div>
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
+      {[50, 100].map(v => (
+        <line key={v} x1={rx(v)} x2={rx(v)} y1={pad.t} y2={H - pad.b}
+          stroke="var(--line)" strokeWidth="1"
+          strokeDasharray={v < 100 ? '2 3' : undefined} opacity="0.45" />
       ))}
-    </div>
+      {data.map((d, i) => {
+        const hov = hovIdx === i;
+        const dotX = rx(d.pct);
+        return (
+          <g key={i}
+            style={{ opacity: visible ? 1 : 0, transition: `opacity 0.5s ease ${i * 65}ms` }}
+            onMouseEnter={() => setHovIdx(i)}
+            onMouseLeave={() => setHovIdx(null)}>
+            <text x={pad.l - 8} y={ry(i) + 3.5}
+              fill={hov ? 'var(--ink)' : 'var(--ink-dim)'}
+              fontSize="9" textAnchor="end" fontFamily="JetBrains Mono, monospace"
+              style={{ transition: 'fill 0.15s' }}>
+              {d.sector}
+            </text>
+            <line x1={pad.l} x2={pad.l + pw} y1={ry(i)} y2={ry(i)}
+              stroke="var(--line)" strokeWidth="1" opacity="0.25" />
+            <line x1={pad.l} x2={dotX} y1={ry(i)} y2={ry(i)}
+              stroke={hov ? 'var(--accent)' : 'var(--blueprint)'}
+              strokeWidth={hov ? 2 : 1.5}
+              style={{ transition: 'stroke 0.15s, stroke-width 0.15s' }} />
+            <circle cx={dotX} cy={ry(i)} r={hov ? 5.5 : 4}
+              fill={hov ? 'var(--accent)' : 'var(--blueprint)'}
+              style={{ transition: 'fill 0.15s' }} />
+            <text x={dotX + 8} y={ry(i) + 3.5}
+              fill={hov ? 'var(--accent)' : 'var(--ink-faint)'}
+              fontSize="8" fontFamily="JetBrains Mono, monospace"
+              style={{ transition: 'fill 0.15s' }}>
+              {d.pct}%
+            </text>
+          </g>
+        );
+      })}
+      <text x={rx(50)} y={H - 3} fill="var(--ink-faint)" fontSize="7"
+        textAnchor="middle" fontFamily="JetBrains Mono, monospace">50%</text>
+      <text x={rx(100)} y={H - 3} fill="var(--ink-faint)" fontSize="7"
+        textAnchor="middle" fontFamily="JetBrains Mono, monospace">100%</text>
+    </svg>
   );
 }
 
-/* ============ AI IMPACT CHART ============ */
+/* ============ AI IMPACT CHART (Ring Gauges) ============ */
+function RingGauge({ pct, visible, delay, hovered }) {
+  const R = 15, sw = 3.5;
+  const circ = 2 * Math.PI * R;
+  const offset = visible ? circ - (pct / 100) * circ : circ;
+  const color = hovered ? 'var(--accent)' : 'var(--ok)';
+  return (
+    <svg width="38" height="38" viewBox="0 0 38 38" style={{ flexShrink: 0 }}>
+      <circle cx="19" cy="19" r={R} fill="none" stroke="var(--line-2)" strokeWidth={sw} />
+      <circle cx="19" cy="19" r={R} fill="none"
+        stroke={color} strokeWidth={sw}
+        strokeDasharray={circ.toFixed(2)}
+        strokeDashoffset={offset.toFixed(2)}
+        strokeLinecap="round"
+        transform="rotate(-90 19 19)"
+        style={{ transition: `stroke-dashoffset 1s cubic-bezier(0.4,0,0.2,1) ${delay}ms, stroke 0.15s` }} />
+      <text x="19" y="22" textAnchor="middle"
+        fill={color} fontSize="7" fontFamily="JetBrains Mono, monospace"
+        style={{ transition: 'fill 0.15s' }}>
+        {pct}%
+      </text>
+    </svg>
+  );
+}
+
 function ImpactChart({ data, visible }) {
   const [hovRow, setHovRow] = useState(null);
   return (
@@ -319,24 +411,13 @@ function ImpactChart({ data, visible }) {
         <div key={i} className="impact-row"
           onMouseEnter={() => setHovRow(i)}
           onMouseLeave={() => setHovRow(null)}>
+          <RingGauge pct={d.pct} visible={visible} delay={i * 120} hovered={hovRow === i} />
           <div className="impact-meta">
             <div className="impact-label"
               style={hovRow === i ? { color: 'var(--ink)' } : undefined}>
               {d.label}
             </div>
             <div className="impact-tag">{d.tag}</div>
-          </div>
-          <div className="impact-track"
-            style={hovRow === i ? { height: '6px' } : undefined}>
-            <div className="impact-bar" style={{
-              width: visible ? `${d.pct}%` : '0%',
-              transitionDelay: `${i * 110}ms`,
-              background: hovRow === i ? 'var(--accent)' : undefined,
-            }} />
-          </div>
-          <div className="impact-val"
-            style={hovRow === i ? { color: 'var(--accent)' } : undefined}>
-            {d.pct}%
           </div>
         </div>
       ))}
@@ -387,8 +468,8 @@ function MetricsDash() {
       </div>
       <div className="metrics-charts">
         <div className="chart-panel">
-          <div className="chart-label">BUILD OUTCOMES · PRECISION METRICS</div>
-          <OutcomeChart data={m.outcomes} visible={visible} />
+          <div className="chart-label">BUILD OUTCOMES · CAPABILITY RADAR</div>
+          <RadarChart data={m.outcomes} visible={visible} />
         </div>
         <div className="chart-panel">
           <div className="chart-label">WORKFLOW EXECUTION · 12-MONTH VOLUME</div>

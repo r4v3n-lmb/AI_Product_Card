@@ -309,7 +309,7 @@ function VolumeChart({ data, ceil = 1600, pct = false }) {
   const sepX = hasForecasts ? x(forecastStart) : null;
 
   const gridVals = pct ? [0, 25, 50, 75, 100] : [0, 400, 800, 1200, 1600];
-  const xIdx = data.length <= 9 ? data.map((_, i) => i) : [0, 3, 6, 9, 11];
+  const xIdx = data.length <= 12 ? data.map((_, i) => i) : [0, 3, 6, 9, 11];
   const fmtY   = v => v === 0 ? '0' : pct ? `${v}%` : `${v / 1000}k`;
   const fmtTip = v => pct ? `${v}%` : v >= 1000 ? `${(v / 1000).toFixed(2)}k` : String(v);
 

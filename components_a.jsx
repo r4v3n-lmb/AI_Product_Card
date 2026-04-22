@@ -159,6 +159,7 @@ function Terminal() {
           { t: 'ok',   s: '  contact    · how to get in touch' },
           { t: 'ok',   s: '  whoami     · who is Revan' },
           { t: 'ok',   s: '  clear      · start over' },
+          { t: 'ok',   s: '  reboot     · replay the boot sequence' },
         ];
       case 'projects': case 'catalog':
         return (window.CATALOG || []).map(c => ({ t: 'ok', s: `  [${c.idx}] ${c.title}  ·  ${c.sector}` }));
@@ -199,6 +200,11 @@ function Terminal() {
     setCmd('');
     if (!command) return;
     if (command === 'clear') { setReplay(r => r + 1); return; }
+    if (command === 'reboot') {
+      setLines(prev => [...prev, { t: 'prompt', s: '> reboot' }, { t: 'ok', s: '  rebooting...' }]);
+      setTimeout(() => { sessionStorage.removeItem('booted'); window.location.reload(); }, 800);
+      return;
+    }
     setLines(prev => [...prev, { t: 'prompt', s: `> ${command}` }, ...getResponse(command)]);
   };
 

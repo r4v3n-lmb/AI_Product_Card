@@ -149,9 +149,9 @@ window.TERMINAL_SCRIPT = [
 ];
 
 window.PHILOSOPHY = [
-  { num: '01', h: 'Build Over Talk', p: 'I ship version-controlled prototypes on GitHub. No theoretical slide decks — the repo is the pitch.' },
-  { num: '02', h: 'Systems, Not Chatbots', p: 'Every deploy ships with error-handling loops, retry queues, and a management dashboard. Chatbots fail silently. Systems don\'t.' },
-  { num: '03', h: 'Localization-First', p: 'A background in localization means the AI doesn\'t just translate — it operates with cultural and linguistic precision for each market.' },
+  { num: '01', h: 'You See The Work First', p: 'You get a working prototype before any second meeting. The code is on GitHub, the dashboard is live — you can see exactly what\'s running before you sign anything off.' },
+  { num: '02', h: 'It Doesn\'t Fail Quietly', p: 'Every system ships with automatic error recovery, a live management dashboard, and alert logic. If something breaks at 2am, it retries itself — and you see it in the logs.' },
+  { num: '03', h: 'Built For Your Market', p: 'Systems are built around how your customers actually speak and buy — not a generic template. Whether that\'s a ZA township, a UK high street, or an EU compliance market.' },
 ];
 
 window.TESTIMONIAL = {
@@ -188,13 +188,11 @@ window.PROFILE = {
     { k: 'AVAILABILITY', v: '● Accepting briefs', tone: 'ok' },
   ],
   secondary: [
-    { k: 'FOCUS', v: 'Localization · Ops · RAG' },
-    { k: 'AGENTS', v: 'LangGraph · LangChain' },
-    { k: 'STACK', v: 'n8n · Python · FastAPI' },
-    { k: 'DATA', v: 'Firebase · Firestore' },
-    { k: 'FRONTEND', v: 'HTML · CSS · JS' },
-    { k: 'VISUALISATION', v: 'SVG · Chart.js · D3' },
-    { k: 'LEAD TIME', v: '2-wk sprint cycle' },
+    { k: 'WHAT I BUILD', v: 'Calls · Orders · Retention · Leads' },
+    { k: 'DELIVERS', v: 'System + Dashboard + Docs' },
+    { k: 'SUPPORT', v: '30 days post-launch' },
+    { k: 'PRICING', v: 'Scope-based · Quote in 48h' },
+    { k: 'LIVE IN', v: '2 weeks' },
   ],
 };
 

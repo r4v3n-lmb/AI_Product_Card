@@ -3,10 +3,21 @@ const { useState, useEffect, useRef, useMemo } = React;
 /* ============ TOP BAR ============ */
 function TopBar() {
   const [time, setTime] = useState(() => new Date());
+  const [theme, setTheme] = useState(() => document.documentElement.getAttribute('data-theme') || 'dark');
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(t);
   }, []);
+  useEffect(() => {
+    const obs = new MutationObserver(() => setTheme(document.documentElement.getAttribute('data-theme') || 'dark'));
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => obs.disconnect();
+  }, []);
+  const toggleTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('theme', next);
+  };
   const pad = n => String(n).padStart(2, '0');
   const stamp = `${time.getUTCFullYear()}.${pad(time.getUTCMonth()+1)}.${pad(time.getUTCDate())} · ${pad(time.getUTCHours())}:${pad(time.getUTCMinutes())}:${pad(time.getUTCSeconds())} UTC`;
   const rev = `REV ${pad(time.getUTCMonth()+1)}.${String(time.getUTCFullYear()).slice(2)}`;
@@ -23,6 +34,9 @@ function TopBar() {
       <div className="right">
         <span className="faint">{stamp}</span>
         <span>{rev}</span>
+        <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}>
+          {theme === 'dark' ? '○ LT' : '● DK'}
+        </button>
       </div>
     </div>
   );
@@ -66,30 +80,30 @@ function Hero() {
     <section id="s01" className="hero">
       <div className="hero-wrap">
         <div>
-          <div className="eyebrow">AI Solutions Architect · Automation Systems · Johannesburg, ZA</div>
+          <div className="eyebrow">AI Automation for SMBs · Johannesburg, ZA · Taking new clients</div>
           <h1 className="serif">
-            Digital <span className="underline">Nervous&nbsp;Systems</span>
-            <br /><em>for real&nbsp;businesses.</em>
+            Your business<br /><span className="underline">shouldn't need&nbsp;you</span>
+            <br /><em>to run at&nbsp;2am.</em>
           </h1>
           <p className="sub">
-            I design, build, and deploy <strong>autonomous workflows</strong> that replace manual admin with
-            scalable AI. Specialising in <strong>localization</strong>, <strong>process automation</strong>, and
-            <strong> system integrity</strong> — from single-operator SMBs to multi-branch fleets.
+            I build <strong>AI systems</strong> that handle your calls, rebook your clients,
+            take your orders, and qualify your leads — <strong>automatically, 24/7</strong>.
+            No more missed jobs, forgotten follow-ups, or money left on the table.
           </p>
           <div className="cta-row">
             <a className="btn primary" href={bookUrl} target="_blank" rel="noreferrer">
-              Book a Demo <span className="arrow">→</span>
+              Book a Free Call <span className="arrow">→</span>
             </a>
             <a className="btn" href="https://github.com/r4v3n-lmb" target="_blank" rel="noreferrer">
               View GitHub <span className="arrow">→</span>
             </a>
             <button className="btn" onClick={() => window.dispatchEvent(new Event('open-chat'))}>
-              Talk to the AI <span className="arrow">→</span>
+              Ask a Question <span className="arrow">→</span>
             </button>
           </div>
           <div className="hero-avail">
             <span className="pulse"></span>
-            <span>Available for new projects &nbsp;·&nbsp; 2-week sprint cycle</span>
+            <span>Taking new clients &nbsp;·&nbsp; Most systems live within 2 weeks</span>
           </div>
         </div>
         <div className="hero-aside">

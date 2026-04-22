@@ -1,5 +1,25 @@
 const { useState, useEffect, useRef } = React;
 
+/* ============ CATALOG CTA STRIP ============ */
+function CatalogCta() {
+  const bookContact = (window.CONTACT || []).find(c => String(c.k).toLowerCase() === 'book');
+  const bookUrl = bookContact?.href || 'https://calendly.com/revan_lombard';
+  return (
+    <div className="catalog-cta reveal-section">
+      <p className="catalog-cta-heading serif">Recognise your business in one of those?</p>
+      <p className="catalog-cta-sub">Book a free 20-min call. Tell me what&apos;s slowing you down — I&apos;ll sketch your system on the spot, no pitch deck involved.</p>
+      <div className="cta-row" style={{justifyContent:'center', marginTop:24}}>
+        <a className="btn primary" href={bookUrl} target="_blank" rel="noreferrer">
+          Book a Free Call <span className="arrow">→</span>
+        </a>
+        <a className="btn" href="https://wa.me/27722375833" target="_blank" rel="noreferrer">
+          WhatsApp Me <span className="arrow">→</span>
+        </a>
+      </div>
+    </div>
+  );
+}
+
 /* ============ CONTACT ============ */
 function Contact() {
   const bookContact = (window.CONTACT || []).find(c => String(c.k).toLowerCase() === 'book');
@@ -25,9 +45,13 @@ function Contact() {
           <span style={{color:'var(--ink-faint)'}}>·</span>
           <span>Fixed quote within 48h</span>
         </div>
+        <p style={{marginTop:14, fontSize:13, color:'var(--ink-dim)', lineHeight:1.7, maxWidth:420}}>
+          Most projects sit between <strong style={{color:'var(--ink)'}}>R8,000 – R30,000</strong> depending on integrations and scope.
+          You get a fixed quote before any work begins — no open-ended billing, no surprises.
+        </p>
         <div className="cta-row">
           <a className="btn primary" href={bookUrl} target="_blank" rel="noreferrer">
-            Book Diagnostic <span className="arrow">→</span>
+            Book a Free Call <span className="arrow">→</span>
           </a>
           <a className="btn" href="https://wa.me/27722375833" target="_blank" rel="noreferrer">
             WhatsApp <span className="arrow">→</span>
@@ -69,7 +93,7 @@ function ChatFloater() {
   const fallbackContacts = [emailContact?.copy, phoneContact?.copy].filter(Boolean).join(' · ');
   const presetReplies = {
     'What do you build?': 'I build autonomous ops systems: AI intake, dispatch, retention flows, ordering bots, and localization pipelines using n8n, Python, RAG, and API integrations.',
-    'Pricing?': `Pricing scales with scope, integrations, and reliability requirements. Typical work starts with a focused sprint, then expands to managed rollout. Book a diagnostic at ${bookDisplay}.`,
+    'Pricing?': `Most projects sit between R8,000 and R30,000 depending on complexity and integrations. You get a fixed quote within 48 hours of our first call — no open-ended billing, no surprises. Book at ${bookDisplay}.`,
     'How fast can you ship?': 'Most projects start with a 1-week sprint for architecture and first live flow. Production-ready rollouts usually take 2-6 weeks depending on integrations and edge cases.',
     'Show me a repo': 'You can review build style and architecture patterns on GitHub: github.com/r4v3n-lmb. If you want, I can point you to the closest project pattern for your use case.',
   };
@@ -389,6 +413,11 @@ function BootScreen() {
     });
   }, []);
 
+  const skip = () => {
+    setFading(true);
+    setTimeout(() => { sessionStorage.setItem('booted', '1'); setGone(true); }, 700);
+  };
+
   if (gone) return null;
   return (
     <div className={`boot-screen${fading ? ' fade' : ''}`}>
@@ -400,6 +429,7 @@ function BootScreen() {
         ))}
         {lines.length > 0 && !fading && <span className="caret"></span>}
       </div>
+      {!fading && <button className="boot-skip" onClick={skip}>skip →</button>}
     </div>
   );
 }
@@ -408,7 +438,11 @@ function BootScreen() {
 function App() {
   useEffect(() => {
     const saved = localStorage.getItem('theme');
-    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    if (saved) {
+      document.documentElement.setAttribute('data-theme', saved);
+    } else if (window.matchMedia?.('(prefers-color-scheme: light)').matches) {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
   }, []);
 
   useEffect(() => {
@@ -433,7 +467,7 @@ function App() {
       <Hero />
 
       <section id="s02" className="reveal-section" data-screen-label="02 Capabilities">
-        <SectionLabel num="02" title="Capabilities Terminal · Tech Stack" coord="C-01 / D-08" />
+        <SectionLabel num="02" title="What I Build · Live Demo" coord="C-01 / D-08" />
         <div className="split">
           <Terminal />
           <StackGrid />
@@ -441,9 +475,11 @@ function App() {
       </section>
 
       <section id="s03" className="reveal-section" data-screen-label="03 Build Catalog">
-        <SectionLabel num="03" title="Build Catalog" coord="E-01 / J-12" />
+        <SectionLabel num="03" title="Real Systems I've Built · Pick Your Sector" coord="E-01 / J-12" />
         <Elite10 />
       </section>
+
+      <CatalogCta />
 
       <section id="s04" className="reveal-section" data-screen-label="04 Philosophy">
         <SectionLabel num="04" title="Builder's Philosophy" coord="K-01 / K-06" />
@@ -456,17 +492,17 @@ function App() {
       </section>
 
       <section id="s05" className="reveal-section" data-screen-label="06 Metrics">
-        <SectionLabel num="06" title="System Metrics · Performance Intelligence" coord="L-01 / L-14" />
+        <SectionLabel num="06" title="Real-World Results · Industry Data" coord="L-01 / L-14" />
         <MetricsDash />
       </section>
 
       <section id="s06" className="reveal-section" data-screen-label="07 Proof">
-        <SectionLabel num="07" title="Proof of Work · Field Signal" coord="M-01 / M-10" />
+        <SectionLabel num="07" title="Proof of Work · Real Client Results" coord="M-01 / M-10" />
         <ProofGrid />
       </section>
 
       <section id="s07" className="reveal-section" data-screen-label="08 Contact">
-        <SectionLabel num="08" title="Engagement · Direct Channels" coord="N-01 / N-08" />
+        <SectionLabel num="08" title="Let's Talk · Book a Free Call" coord="N-01 / N-08" />
         <Contact />
       </section>
 

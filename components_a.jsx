@@ -248,7 +248,6 @@ function Terminal() {
       { t: 'out', s: '' },
       { t: 'tag', s: "  // interactive mode · type 'help' for commands" },
     ]);
-    setTimeout(() => { if (inputRef.current) inputRef.current.focus(); }, 50);
   }, [done]);
 
   const render = (l, i) => {

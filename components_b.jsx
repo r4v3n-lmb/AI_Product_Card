@@ -337,7 +337,10 @@ function KpiCard({ label, value, unit, visible }) {
 
 function RadarChart({ data, visible, activeVal, onActiveVal }) {
   const [hovIdx, setHovIdx] = useState(null);
-  const effectiveIdx = hovIdx !== null ? hovIdx : (activeVal != null ? data.findIndex(d => d.value === activeVal) : -1);
+  const [draggingIdx, setDraggingIdx] = useState(null);
+  const [values, setValues] = useState(() => data.map(d => d.value));
+  const svgRef = useRef(null);
+
   const W = 400, H = 290;
   const cx = W / 2, cy = H / 2 + 10;
   const R = 105;
@@ -347,64 +350,112 @@ function RadarChart({ data, visible, activeVal, onActiveVal }) {
   const rings = [0.25, 0.5, 0.75, 1];
   const ringPoly = f => Array.from({ length: n }, (_, i) => pt(i, f))
     .map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
-  const dataPts = data.map((d, i) => pt(i, d.value / 100));
+  const dataPts = values.map((v, i) => pt(i, v / 100));
   const dataPoly = dataPts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(' ');
+
+  const effectiveIdx = draggingIdx !== null ? draggingIdx
+    : hovIdx !== null ? hovIdx
+    : (activeVal != null ? data.findIndex(d => d.value === activeVal) : -1);
+
+  const toSVG = (e) => {
+    const rect = svgRef.current.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    return { x: (clientX - rect.left) * (W / rect.width), y: (clientY - rect.top) * (H / rect.height) };
+  };
+
+  const projectAxis = (mx, my, i) => {
+    const a = ang(i);
+    const dot = (mx - cx) * Math.cos(a) + (my - cy) * Math.sin(a);
+    return Math.max(5, Math.min(100, Math.round((dot / R) * 100)));
+  };
+
+  const onDragMove = (e) => {
+    if (draggingIdx === null) return;
+    const { x, y } = toSVG(e);
+    setValues(prev => prev.map((v, j) => j === draggingIdx ? projectAxis(x, y, draggingIdx) : v));
+  };
+
+  const onDragEnd = () => setDraggingIdx(null);
+
+  useEffect(() => {
+    if (draggingIdx === null) return;
+    window.addEventListener('mouseup', onDragEnd);
+    window.addEventListener('touchend', onDragEnd);
+    return () => { window.removeEventListener('mouseup', onDragEnd); window.removeEventListener('touchend', onDragEnd); };
+  }, [draggingIdx]);
+
+  const isModified = values.some((v, i) => v !== data[i].value);
+
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
-      {rings.map((f, ri) => (
-        <polygon key={ri} points={ringPoly(f)} fill="none"
-          stroke="var(--line)" strokeWidth="1" opacity={f === 1 ? 0.7 : 0.35} />
-      ))}
-      {data.map((_, i) => {
-        const [x, y] = pt(i, 1);
-        return <line key={i} x1={cx} y1={cy} x2={x} y2={y}
-          stroke="var(--line)" strokeWidth="1" opacity="0.5" />;
-      })}
-      <text x={cx + 5} y={pt(0, 0.5)[1] + 3} fill="var(--ink-faint)"
-        fontSize="7" fontFamily="JetBrains Mono, monospace">50%</text>
-      <g style={{
-        transformOrigin: `${cx}px ${cy}px`,
-        transform: `scale(${visible ? 1 : 0})`,
-        transition: 'transform 1s cubic-bezier(0.34,1.56,0.64,1)',
-      }}>
-        <polygon points={dataPoly} fill="rgba(122,184,212,0.14)"
-          stroke="var(--blueprint)" strokeWidth="1.5" strokeLinejoin="round" />
-        {dataPts.map(([x, y], i) => (
-          <circle key={i} cx={x} cy={y}
-            r={effectiveIdx === i ? 6 : 3.5}
-            fill={effectiveIdx === i ? 'var(--blueprint)' : 'var(--bg)'}
-            stroke="var(--blueprint)" strokeWidth="1.5"
-            style={{ cursor: 'pointer' }}
-            onMouseEnter={() => { setHovIdx(i); onActiveVal?.(data[i].value); }}
-            onMouseLeave={() => { setHovIdx(null); onActiveVal?.(null); }} />
+    <div>
+      <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`}
+        style={{ width: '100%', height: 'auto', touchAction: draggingIdx !== null ? 'none' : 'auto', cursor: draggingIdx !== null ? 'grabbing' : 'default' }}
+        onMouseMove={onDragMove}
+        onTouchMove={e => { e.preventDefault(); onDragMove(e); }}>
+        {rings.map((f, ri) => (
+          <polygon key={ri} points={ringPoly(f)} fill="none"
+            stroke="var(--line)" strokeWidth="1" opacity={f === 1 ? 0.7 : 0.35} />
         ))}
-      </g>
-      {data.map((d, i) => {
-        const [lx, ly] = pt(i, 1.3);
-        const anchor = lx > cx + 15 ? 'start' : lx < cx - 15 ? 'end' : 'middle';
-        return (
-          <text key={i} x={lx} y={ly + 3} textAnchor={anchor}
-            fill={effectiveIdx === i ? 'var(--ink)' : 'var(--ink-dim)'}
-            fontSize="8.5" fontFamily="JetBrains Mono, monospace"
-            style={{ transition: 'fill 0.15s' }}>
-            {d.short || d.label}
-          </text>
-        );
-      })}
-      {effectiveIdx !== -1 && (
-        <g>
-          <text x={cx} y={cy - 2} textAnchor="middle" fill="var(--blueprint)"
-            fontSize="26" fontFamily="Inter Tight"
-            style={{ fontWeight: 700, letterSpacing: '-0.03em' }}>
-            {data[effectiveIdx].value}%
-          </text>
-          <text x={cx} y={cy + 13} textAnchor="middle" fill="var(--ink-faint)"
-            fontSize="7.5" fontFamily="JetBrains Mono, monospace">
-            {data[effectiveIdx].short || data[effectiveIdx].label}
-          </text>
+        {data.map((_, i) => {
+          const [x, y] = pt(i, 1);
+          return <line key={i} x1={cx} y1={cy} x2={x} y2={y}
+            stroke="var(--line)" strokeWidth="1" opacity="0.5" />;
+        })}
+        <text x={cx + 5} y={pt(0, 0.5)[1] + 3} fill="var(--ink-faint)"
+          fontSize="7" fontFamily="JetBrains Mono, monospace">50%</text>
+        <g style={{
+          transformOrigin: `${cx}px ${cy}px`,
+          transform: `scale(${visible ? 1 : 0})`,
+          transition: 'transform 1s cubic-bezier(0.34,1.56,0.64,1)',
+        }}>
+          <polygon points={dataPoly} fill="rgba(122,184,212,0.14)"
+            stroke="var(--blueprint)" strokeWidth="1.5" strokeLinejoin="round" />
+          {dataPts.map(([x, y], i) => (
+            <circle key={i} cx={x} cy={y}
+              r={effectiveIdx === i ? 6 : 4}
+              fill={effectiveIdx === i ? 'var(--blueprint)' : 'var(--bg)'}
+              stroke="var(--blueprint)" strokeWidth="1.5"
+              style={{ cursor: 'grab' }}
+              onMouseEnter={() => { setHovIdx(i); onActiveVal?.(data[i].value); }}
+              onMouseLeave={() => { if (draggingIdx === null) { setHovIdx(null); onActiveVal?.(null); } }}
+              onMouseDown={e => { e.preventDefault(); setDraggingIdx(i); }}
+              onTouchStart={e => { e.preventDefault(); setDraggingIdx(i); }} />
+          ))}
         </g>
+        {data.map((d, i) => {
+          const [lx, ly] = pt(i, 1.3);
+          const anchor = lx > cx + 15 ? 'start' : lx < cx - 15 ? 'end' : 'middle';
+          return (
+            <text key={i} x={lx} y={ly + 3} textAnchor={anchor}
+              fill={effectiveIdx === i ? 'var(--ink)' : 'var(--ink-dim)'}
+              fontSize="8.5" fontFamily="JetBrains Mono, monospace"
+              style={{ transition: 'fill 0.15s' }}>
+              {d.short || d.label}
+            </text>
+          );
+        })}
+        {effectiveIdx !== -1 && (
+          <g>
+            <text x={cx} y={cy - 2} textAnchor="middle" fill="var(--blueprint)"
+              fontSize="26" fontFamily="Inter Tight"
+              style={{ fontWeight: 700, letterSpacing: '-0.03em' }}>
+              {values[effectiveIdx]}%
+            </text>
+            <text x={cx} y={cy + 13} textAnchor="middle" fill="var(--ink-faint)"
+              fontSize="7.5" fontFamily="JetBrains Mono, monospace">
+              {data[effectiveIdx].short || data[effectiveIdx].label}
+            </text>
+          </g>
+        )}
+      </svg>
+      {isModified && (
+        <button onClick={() => setValues(data.map(d => d.value))}
+          style={{fontSize:9, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--ink-faint)', border:'1px solid var(--line-2)', padding:'3px 8px', marginTop:4}}>
+          ↺ reset
+        </button>
       )}
-    </svg>
+    </div>
   );
 }
 
@@ -701,7 +752,7 @@ function MetricsDash() {
       <div className="metrics-charts">
         <div className="chart-panel">
           <div className="chart-label" style={{paddingBottom:4, marginBottom:0, borderBottom:0}}>AI PERFORMANCE · FIVE-DIMENSION INDEX</div>
-          <div className="chart-note">enterprise averages — hover a point to cross-highlight below</div>
+          <div className="chart-note">enterprise averages — drag a point to explore · hover to cross-highlight below</div>
           <RadarChart data={m.outcomes} visible={visible} activeVal={activeVal} onActiveVal={setActiveVal} />
         </div>
         <div className="chart-panel" style={{display:'flex',flexDirection:'column'}}>

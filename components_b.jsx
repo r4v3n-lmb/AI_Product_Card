@@ -335,15 +335,15 @@ function KpiCard({ label, value, unit, visible }) {
   );
 }
 
-// Correlation matrix for the 5 radar axes (order matches data.js outcomes):
-// [Adoption, Automatable, Self-Service, Speed Gain, Cost Cut]
-// CORR[i][j] = how much axis j shifts per 1-unit drag of axis i (0 = no link)
+// Correlation matrix — [Adoption, Automatable, Self-Service, Speed Gain, Cost Cut]
+// CORR[i][j] = how much axis j shifts per 1-unit drag of axis i
+// Negative = inverse relationship (e.g. cost cuts via headcount reduction hurt speed)
 const RADAR_CORR = [
-  [0,    0.30, 0.40, 0.25, 0.20], // Adoption   → drives self-svc, automatable
-  [0.25, 0,    0.30, 0.60, 0.55], // Automatable → strongly drives speed & cost
-  [0.35, 0.25, 0,    0.30, 0.45], // Self-Service→ cuts costs, drives adoption
-  [0.20, 0.50, 0.20, 0,    0.60], // Speed Gain  → directly cuts costs
-  [0.15, 0.45, 0.35, 0.55, 0   ], // Cost Cut    → speed & automatable follow
+  [ 0,     0.25,  0.30,  0.05,  0.00], // Adoption   → surfaces automatable work & self-svc; no direct cost/speed effect
+  [ 0.20,  0,     0.25,  0.60,  0.65], // Automatable → root driver: directly enables speed AND cost savings
+  [ 0.15,  0.10,  0,     0.10,  0.45], // Self-Service→ cuts support costs strongly; minor speed/automatable lift
+  [ 0.10,  0.30,  0.15,  0,     0.20], // Speed Gain  → faster tasks = some labour saving; correlates with automatable
+  [ 0.05,  0.25,  0.30, -0.20,  0   ], // Cost Cut    → drives self-svc adoption; headcount cuts HURT speed
 ];
 
 function RadarChart({ data, visible, activeVal, onActiveVal }) {

@@ -267,6 +267,7 @@ function ProofGrid() {
           <div>
             <h4 className="serif">Contribution Activity</h4>
             <div className="faint" style={{fontSize:10, letterSpacing:'0.16em', textTransform:'uppercase', marginTop:4}}>52 weeks · {total} contributions</div>
+            <div style={{fontSize:11, color:'var(--ink-dim)', marginTop:6, lineHeight:1.5}}>Each cell is a day with code shipped to a live system.</div>
           </div>
           <div style={{textAlign:'right'}}>
             <div className="serif" style={{fontSize:28, color:'var(--accent)', letterSpacing:'-0.02em'}}>{streak}<span style={{fontFamily:'JetBrains Mono', fontSize:11, color:'var(--ink-faint)', marginLeft:4, letterSpacing:'0.1em'}}>days</span></div>

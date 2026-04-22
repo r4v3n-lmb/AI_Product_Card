@@ -16,6 +16,13 @@ function Contact() {
           Fastest way in: book a 20-min diagnostic on Calendly, or hit WhatsApp —
           I respond same day. Tell me what&apos;s slowing you down, I&apos;ll come back with an architecture sketch.
         </p>
+        <div style={{marginTop:20, fontSize:11, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--blueprint)', display:'flex', gap:16, flexWrap:'wrap'}}>
+          <span>Sprint from R15,000</span>
+          <span style={{color:'var(--ink-faint)'}}>·</span>
+          <span>Full system from R45,000</span>
+          <span style={{color:'var(--ink-faint)'}}>·</span>
+          <span>Repo-delivered</span>
+        </div>
         <div className="cta-row">
           <a className="btn primary" href={bookUrl} target="_blank" rel="noreferrer">
             Book Diagnostic <span className="arrow">→</span>

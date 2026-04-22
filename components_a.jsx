@@ -144,8 +144,64 @@ function Terminal() {
   const [done, setDone] = useState(false);
   const bodyRef = useRef(null);
   const containerRef = useRef(null);
+  const inputRef = useRef(null);
   const hasLeftView = useRef(false);
   const [replay, setReplay] = useState(0);
+  const [cmd, setCmd] = useState('');
+
+  const getResponse = command => {
+    switch (command) {
+      case 'help':
+        return [
+          { t: 'tag',  s: '  available commands:' },
+          { t: 'ok',   s: '  help       · show this list' },
+          { t: 'ok',   s: '  projects   · list build catalog' },
+          { t: 'ok',   s: '  status     · live system status' },
+          { t: 'ok',   s: '  pricing    · engagement rates' },
+          { t: 'ok',   s: '  contact    · direct channels' },
+          { t: 'ok',   s: '  whoami     · identity' },
+          { t: 'ok',   s: '  clear      · reset terminal' },
+        ];
+      case 'projects': case 'catalog':
+        return (window.CATALOG || []).map(c => ({ t: 'ok', s: `  [${c.idx}] ${c.title}  ·  ${c.sector}` }));
+      case 'status':
+        return [
+          { t: 'tag',  s: '  systems_online ............  5 / 5' },
+          { t: 'tag',  s: '  avg_response_time ..........  420ms' },
+          { t: 'tag',  s: '  uptime_30d .................  99.94%' },
+          { t: 'tag',  s: '  active_automations .........  18' },
+          { t: 'warn', s: '  queue.depth ................  3 jobs pending' },
+        ];
+      case 'pricing':
+        return [
+          { t: 'tag',  s: '  sprint ...................  from R15,000' },
+          { t: 'tag',  s: '  full_system ..............  from R45,000' },
+          { t: 'tag',  s: '  sprint_duration ..........  2 weeks' },
+          { t: 'tag',  s: '  support_window ...........  90 days post-deploy' },
+          { t: 'ok',   s: '  repo-delivered · no retainers · scope-based' },
+        ];
+      case 'contact':
+        return (window.CONTACT || []).map(c => ({ t: 'tag', s: `  ${String(c.k).padEnd(14)}  ${c.v}` }));
+      case 'whoami':
+        return [
+          { t: 'out',  s: 'revan.lombard :: ai-solutions-architect' },
+          { t: 'tag',  s: '  location ................  johannesburg, za' },
+          { t: 'tag',  s: '  languages ...............  en · af' },
+          { t: 'tag',  s: '  github ..................  @r4v3n-lmb' },
+          { t: 'ok',   s: '  status ..................  accepting briefs' },
+        ];
+      default:
+        return [{ t: 'warn', s: `  command not found: ${command}  (type 'help')` }];
+    }
+  };
+
+  const handleCmd = () => {
+    const command = cmd.trim().toLowerCase();
+    setCmd('');
+    if (!command) return;
+    if (command === 'clear') { setReplay(r => r + 1); return; }
+    setLines(prev => [...prev, { t: 'prompt', s: `> ${command}` }, ...getResponse(command)]);
+  };
 
   useEffect(() => {
     const el = containerRef.current;
@@ -181,6 +237,7 @@ function Terminal() {
   }, [replay]);
 
   useEffect(() => { if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight; }, [lines]);
+  useEffect(() => { if (done && inputRef.current) inputRef.current.focus(); }, [done]);
 
   const render = (l, i) => {
     const last = i === lines.length - 1;
@@ -205,7 +262,22 @@ function Terminal() {
       </div>
       <div className="terminal-body" ref={bodyRef}>
         {lines.map(render)}
-        {done && <div className="line prompt">&gt; <span className="caret"></span></div>}
+        {done && (
+          <div className="line prompt terminal-input-line">
+            &gt;&nbsp;
+            <input
+              ref={inputRef}
+              className="terminal-input"
+              value={cmd}
+              onChange={e => setCmd(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') handleCmd(); }}
+              spellCheck={false}
+              autoComplete="off"
+              autoCorrect="off"
+              placeholder="type a command..."
+            />
+          </div>
+        )}
       </div>
     </div>
   );

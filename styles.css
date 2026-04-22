@@ -559,6 +559,33 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 .footer-bar .dots { display: flex; gap: 4px; }
 .footer-bar .dot { width: 4px; height: 4px; background: var(--line-3); }
 
+/* --- Boot screen --- */
+.boot-screen {
+  position: fixed; inset: 0; z-index: 999;
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.7s ease;
+}
+.boot-screen.fade { opacity: 0; pointer-events: none; }
+.boot-terminal {
+  font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6;
+  color: var(--ink); min-width: 380px;
+}
+.boot-terminal .line { margin-bottom: 4px; white-space: pre; }
+.boot-terminal .ok { color: var(--ok); }
+.boot-terminal .tag2 { color: var(--blueprint); }
+.boot-terminal .prompt { color: var(--ink-dim); }
+
+/* --- Interactive terminal input --- */
+.terminal-input-line { display: flex; align-items: center; }
+.terminal-input {
+  background: transparent; border: none; outline: none;
+  color: var(--ink-dim); font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; flex: 1; caret-color: var(--ink);
+  letter-spacing: 0;
+}
+.terminal-input::placeholder { color: var(--ink-faint); opacity: 1; }
+
 /* --- Tour --- */
 .tour-spotlight {
   position: fixed; z-index: 198; pointer-events: none;

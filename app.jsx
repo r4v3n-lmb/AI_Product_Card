@@ -348,6 +348,54 @@ function ScrollTop() {
   return <button className="scroll-top" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>↑</button>;
 }
 
+/* ============ BOOT SCREEN ============ */
+function BootScreen() {
+  const [lines, setLines] = useState([]);
+  const [fading, setFading] = useState(false);
+  const [gone, setGone] = useState(() => !!sessionStorage.getItem('booted'));
+
+  const script = [
+    { t: 'tag',    s: 'REVAN.LOMBARD.OPS  ·  SYSTEM BOOT v4.0' },
+    { t: 'out',    s: 'initialising interface...' },
+    { t: 'ok',     s: '  [✓] identity profile      loaded' },
+    { t: 'ok',     s: '  [✓] ops stack             online' },
+    { t: 'ok',     s: '  [✓] intake agent          ready' },
+    { t: 'ok',     s: '  [✓] build catalog         mounted' },
+    { t: 'prompt', s: '> LAUNCHING INTERFACE' },
+  ];
+
+  useEffect(() => {
+    if (gone) return;
+    let delay = 300;
+    script.forEach((l, idx) => {
+      delay += l.t === 'prompt' ? 450 : l.t === 'ok' ? 160 : 240;
+      setTimeout(() => {
+        setLines(prev => [...prev, l]);
+        if (idx === script.length - 1) {
+          setTimeout(() => {
+            setFading(true);
+            setTimeout(() => { sessionStorage.setItem('booted', '1'); setGone(true); }, 700);
+          }, 500);
+        }
+      }, delay);
+    });
+  }, []);
+
+  if (gone) return null;
+  return (
+    <div className={`boot-screen${fading ? ' fade' : ''}`}>
+      <div className="boot-terminal">
+        {lines.map((l, i) => (
+          <div key={i} className={`line${l.t === 'ok' ? ' ok' : l.t === 'tag' ? ' tag2' : l.t === 'prompt' ? ' prompt' : ''}`}>
+            {l.s}
+          </div>
+        ))}
+        {lines.length > 0 && !fading && <span className="caret"></span>}
+      </div>
+    </div>
+  );
+}
+
 /* ============ APP ============ */
 function App() {
   useEffect(() => {
@@ -360,6 +408,8 @@ function App() {
   }, []);
 
   return (
+    <>
+    <BootScreen />
     <div className="frame">
       <div className="crosshair ch-tl"></div>
       <div className="crosshair ch-tr"></div>
@@ -413,6 +463,7 @@ function App() {
       <SectionNav />
       <ScrollTop />
     </div>
+    </>
   );
 }
 

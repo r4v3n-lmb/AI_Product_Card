@@ -307,10 +307,29 @@ function ProofGrid() {
 }
 
 /* ============ METRICS DASHBOARD ============ */
-function KpiCard({ label, value, unit }) {
+function KpiCard({ label, value, unit, visible }) {
+  const [display, setDisplay] = useState('0');
+  useEffect(() => {
+    if (!visible) return;
+    const prefix = value.startsWith('$') ? '$' : '';
+    const raw = value.replace('$', '');
+    const target = parseFloat(raw);
+    const decimals = (raw.split('.')[1] || '').length;
+    const duration = 1600;
+    const start = performance.now();
+    let raf;
+    const tick = now => {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setDisplay(prefix + (target * eased).toFixed(decimals));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [visible]);
   return (
     <div className="kpi-card">
-      <div className="kpi-value serif">{value}<span className="kpi-unit">{unit}</span></div>
+      <div className="kpi-value serif">{display}<span className="kpi-unit">{unit}</span></div>
       <div className="kpi-label">{label}</div>
     </div>
   );
@@ -649,7 +668,7 @@ function MetricsDash() {
   return (
     <div className="metrics-dash" ref={ref}>
       <div className="kpi-row">
-        {m.kpis.map((k, i) => <KpiCard key={i} {...k} />)}
+        {m.kpis.map((k, i) => <KpiCard key={i} {...k} visible={visible} />)}
       </div>
       <div className="metrics-section-label"><span>AI INDUSTRY · KEY INDICATORS 2024</span></div>
       <div className="metrics-charts">

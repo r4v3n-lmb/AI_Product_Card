@@ -17,11 +17,13 @@ function Contact() {
           I respond same day. Tell me what&apos;s slowing you down, I&apos;ll come back with an architecture sketch.
         </p>
         <div style={{marginTop:20, fontSize:11, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--blueprint)', display:'flex', gap:16, flexWrap:'wrap'}}>
-          <span>Sprint from R15,000</span>
+          <span>Scope-based pricing</span>
           <span style={{color:'var(--ink-faint)'}}>·</span>
-          <span>Full system from R45,000</span>
+          <span>No retainers</span>
           <span style={{color:'var(--ink-faint)'}}>·</span>
           <span>Repo-delivered</span>
+          <span style={{color:'var(--ink-faint)'}}>·</span>
+          <span>Fixed quote within 48h</span>
         </div>
         <div className="cta-row">
           <a className="btn primary" href={bookUrl} target="_blank" rel="noreferrer">

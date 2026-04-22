@@ -174,11 +174,12 @@ function Terminal() {
         ];
       case 'pricing':
         return [
-          { t: 'tag',  s: '  sprint ...................  from R15,000' },
-          { t: 'tag',  s: '  full_system ..............  from R45,000' },
-          { t: 'tag',  s: '  sprint_duration ..........  2 weeks' },
+          { t: 'tag',  s: '  model ....................  scope-based · no retainers' },
+          { t: 'tag',  s: '  quote_turnaround .........  fixed quote within 48h' },
+          { t: 'tag',  s: '  sprint_duration ..........  2-week cycle' },
           { t: 'tag',  s: '  support_window ...........  90 days post-deploy' },
-          { t: 'ok',   s: '  repo-delivered · no retainers · scope-based' },
+          { t: 'tag',  s: '  delivery .................  repo · dashboard · docs' },
+          { t: 'ok',   s: '  book a diagnostic call to scope your system' },
         ];
       case 'contact':
         return (window.CONTACT || []).map(c => ({ t: 'tag', s: `  ${String(c.k).padEnd(14)}  ${c.v}` }));

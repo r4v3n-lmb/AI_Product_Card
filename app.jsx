@@ -144,7 +144,7 @@ function ChatFloater() {
           WhatsApp →
         </a>
         <button className="float-btn ghost" onClick={() => setOpen(true)}>
-          Talk to AI →
+          <span className="pulse-ai"></span>Talk to AI →
         </button>
       </div>
       <div className={`chat-float ${open ? 'open' : ''}`}>
@@ -230,6 +230,8 @@ function Tour() {
   const next  = () => step < total - 1 ? setStep(s => s + 1) : close();
   const prev  = () => setStep(s => s - 1);
 
+  if (window.innerWidth < 900) return null;
+
   if (!active) return null;
 
   const { title, body, pos } = TOUR_STEPS[step];
@@ -307,7 +309,7 @@ function Tour() {
 /* ============ SECTION NAV ============ */
 function SectionNav() {
   const [active, setActive] = useState('');
-  const ids = ['s02','s03','s04','s-process','s05','s06','s07'];
+  const ids = ['s01','s02','s03','s04','s-process','s05','s06','s07'];
   useEffect(() => {
     const obs = new IntersectionObserver(
       entries => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); }),

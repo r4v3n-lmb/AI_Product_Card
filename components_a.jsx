@@ -63,7 +63,7 @@ function Hero() {
   const profile = window.PROFILE || defaultProfile;
 
   return (
-    <section className="hero">
+    <section id="s01" className="hero">
       <div className="hero-wrap">
         <div>
           <div className="eyebrow">AI Solutions Architect · Automation Systems · Johannesburg, ZA</div>
@@ -143,7 +143,23 @@ function Terminal() {
   const [lines, setLines] = useState([]);
   const [done, setDone] = useState(false);
   const bodyRef = useRef(null);
+  const containerRef = useRef(null);
+  const hasLeftView = useRef(false);
   const [replay, setReplay] = useState(0);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) { hasLeftView.current = true; }
+        else if (hasLeftView.current) { hasLeftView.current = false; setReplay(r => r + 1); }
+      },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   useEffect(() => {
     setLines([]); setDone(false);
@@ -181,7 +197,7 @@ function Terminal() {
   };
 
   return (
-    <div className="terminal">
+    <div className="terminal" ref={containerRef}>
       <div className="terminal-head">
         <div className="dots"><span></span><span></span><span></span></div>
         <span>zsh · revan@architect · ~/ops</span>

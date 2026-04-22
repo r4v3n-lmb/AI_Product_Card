@@ -703,7 +703,7 @@ function HowItWorks() {
   ];
 
   return (
-    <>
+    <div className="process-wrap">
       <div className="process-steps">
         {steps.map((s, i) => (
           <div key={s.num} className="process-cell">
@@ -724,7 +724,7 @@ function HowItWorks() {
           </div>
         ))}
       </div>
-    </>
+    </div>
   );
 }
 

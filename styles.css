@@ -497,8 +497,27 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
   transition: all 0.15s ease;
 }
 .float-btn:hover { background: transparent; color: var(--accent); }
-.float-btn.ghost { background: transparent; color: var(--ink); border-color: var(--line-3); }
-.float-btn.ghost:hover { color: var(--accent); border-color: var(--accent); }
+.float-btn.ghost {
+  background: rgba(122,184,212,0.05);
+  color: var(--blueprint);
+  border-color: var(--blueprint);
+  animation: ai-glow 2.8s ease-in-out infinite;
+}
+.float-btn.ghost:hover { background: rgba(122,184,212,0.12); color: var(--ink); border-color: var(--accent); animation: none; }
+@keyframes ai-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(122,184,212,0); }
+  50%       { box-shadow: 0 0 10px rgba(122,184,212,0.3), 0 0 0 3px rgba(122,184,212,0.08); }
+}
+.pulse-ai {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--blueprint); flex-shrink: 0;
+  animation: pulse-ai 2s infinite;
+}
+@keyframes pulse-ai {
+  0%   { box-shadow: 0 0 0 0 rgba(122,184,212,0.7); }
+  70%  { box-shadow: 0 0 0 6px rgba(122,184,212,0); }
+  100% { box-shadow: 0 0 0 0 rgba(122,184,212,0); }
+}
 
 /* --- Footer / contact --- */
 .contact {
@@ -699,4 +718,58 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
   .process-cell:last-child { border-bottom: 0; }
   .process-conn { display: none; }
   .testimonial-stack { gap: 0; }
+
+  /* --- Vertical spacing --- */
+  section { padding: 32px 0; }
+  .hero { padding: 24px 0 40px; }
+  .topbar { margin-bottom: 24px; }
+  .dim-line { margin-top: 24px; }
+  .contact { padding: 32px 0; }
+
+  /* --- Hero card: let height be content-driven --- */
+  .hero-card { min-height: auto; }
+
+  /* --- Reduce oversized cell paddings --- */
+  .phil-cell { padding: 20px; }
+  .phil-cell .num { font-size: 40px; margin-bottom: 16px; }
+  .kpi-card { padding: 20px 16px; }
+  .chart-panel { padding: 20px 16px; }
+  .testimonial { padding: 20px; }
+  .testimonial-row .testimonial { padding: 20px; }
+  .process-cell { padding: 20px; }
+
+  /* --- Terminal --- */
+  .terminal-body { min-height: 220px; padding: 16px; }
+
+  /* --- Section label: hide coord on narrow screens --- */
+  .section-label .coord { display: none; }
+
+  /* --- Mermaid: scale to container, parent already scrolls --- */
+  .mermaid svg { min-width: 0; width: 100%; }
+
+  /* --- Heatmap: allow horizontal scroll --- */
+  .heatmap-wrap { overflow-x: auto; }
+
+  /* --- Ghost expansion: 2-col → 1-col --- */
+  .ghost-expansion { grid-template-columns: 1fr; }
+  .ghost-repo { border-left: 1px solid var(--line-2); border-top: 0; }
+  .ghost-dash-stats { grid-template-columns: repeat(2, 1fr); }
+  .ghost-dash-stat:nth-child(2) { border-right: 0; }
+  .ghost-dash-stat:nth-child(3), .ghost-dash-stat:nth-child(4) { border-top: 1px solid var(--line-2); }
+  .ghost-dash-stat:nth-child(4) { border-right: 0; }
+
+  /* --- Process: steps left, strip as timeline sidebar right --- */
+  .process-wrap { display: grid; grid-template-columns: 1fr auto; align-items: start; }
+  .process-strip { grid-template-columns: 1fr; border-top: 1px solid var(--line-2); border-left: 0; }
+  .process-strip-cell { border-right: 0; border-bottom: 1px solid var(--line-2); }
+  .process-strip-cell:last-child { border-bottom: 0; }
+
+  /* --- Touch targets --- */
+  .scroll-top { width: 44px; height: 44px; bottom: 16px; left: 16px; }
+  .chat-input input { padding-top: 12px; padding-bottom: 12px; }
+  .chat-input button { padding-top: 12px; padding-bottom: 12px; }
+  .contact-row .copy { padding: 8px 10px; }
+
+  /* --- Floater: align with 16px frame padding --- */
+  .floater { bottom: 16px; right: 16px; }
 }

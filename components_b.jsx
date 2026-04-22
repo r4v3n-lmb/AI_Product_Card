@@ -335,11 +335,23 @@ function KpiCard({ label, value, unit, visible }) {
   );
 }
 
+// Correlation matrix for the 5 radar axes (order matches data.js outcomes):
+// [Adoption, Automatable, Self-Service, Speed Gain, Cost Cut]
+// CORR[i][j] = how much axis j shifts per 1-unit drag of axis i (0 = no link)
+const RADAR_CORR = [
+  [0,    0.30, 0.40, 0.25, 0.20], // Adoption   → drives self-svc, automatable
+  [0.25, 0,    0.30, 0.60, 0.55], // Automatable → strongly drives speed & cost
+  [0.35, 0.25, 0,    0.30, 0.45], // Self-Service→ cuts costs, drives adoption
+  [0.20, 0.50, 0.20, 0,    0.60], // Speed Gain  → directly cuts costs
+  [0.15, 0.45, 0.35, 0.55, 0   ], // Cost Cut    → speed & automatable follow
+];
+
 function RadarChart({ data, visible, activeVal, onActiveVal }) {
   const [hovIdx, setHovIdx] = useState(null);
   const [draggingIdx, setDraggingIdx] = useState(null);
   const [values, setValues] = useState(() => data.map(d => d.value));
   const svgRef = useRef(null);
+  const dragStartValues = useRef(null);
 
   const W = 400, H = 290;
   const cx = W / 2, cy = H / 2 + 10;
@@ -371,9 +383,14 @@ function RadarChart({ data, visible, activeVal, onActiveVal }) {
   };
 
   const onDragMove = (e) => {
-    if (draggingIdx === null) return;
+    if (draggingIdx === null || !dragStartValues.current) return;
     const { x, y } = toSVG(e);
-    setValues(prev => prev.map((v, j) => j === draggingIdx ? projectAxis(x, y, draggingIdx) : v));
+    const newVal = projectAxis(x, y, draggingIdx);
+    const delta = newVal - dragStartValues.current[draggingIdx];
+    setValues(dragStartValues.current.map((v, j) => {
+      if (j === draggingIdx) return newVal;
+      return Math.max(5, Math.min(100, Math.round(v + RADAR_CORR[draggingIdx][j] * delta)));
+    }));
   };
 
   const onDragEnd = () => setDraggingIdx(null);
@@ -419,8 +436,8 @@ function RadarChart({ data, visible, activeVal, onActiveVal }) {
               style={{ cursor: 'grab' }}
               onMouseEnter={() => { setHovIdx(i); onActiveVal?.(data[i].value); }}
               onMouseLeave={() => { if (draggingIdx === null) { setHovIdx(null); onActiveVal?.(null); } }}
-              onMouseDown={e => { e.preventDefault(); setDraggingIdx(i); }}
-              onTouchStart={e => { e.preventDefault(); setDraggingIdx(i); }} />
+              onMouseDown={e => { e.preventDefault(); dragStartValues.current = [...values]; setDraggingIdx(i); }}
+              onTouchStart={e => { e.preventDefault(); dragStartValues.current = [...values]; setDraggingIdx(i); }} />
           ))}
         </g>
         {data.map((d, i) => {

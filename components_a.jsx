@@ -217,6 +217,7 @@ function StackGrid() {
     <div className="stack-grid">
       {window.STACK.map((s, i) => (
         <div key={i} className="stack-cell">
+          {s.icon && <div className="stack-icon">{s.icon}</div>}
           <div className="cat">{s.cat}</div>
           <div className="lbl serif">{s.lbl}</div>
           <div className="desc">{s.desc}</div>

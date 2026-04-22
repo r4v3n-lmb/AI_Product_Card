@@ -1,11 +1,11 @@
 // Tech stack
 window.STACK = [
-  { cat: '01 · Architectural Logic', lbl: 'Workflow Design', desc: 'Multi-branch logic, error-handling loops, solo-vs-fleet routing trees.', reveal: 'n8n · LangGraph · State Machines' },
-  { cat: '02 · AI / LLM Layer', lbl: 'LLM Integration', desc: 'OpenAI, LangChain memory & tools, RAG pipelines, prompt engineering.', reveal: 'GPT-4 · Claude · Vector DBs' },
-  { cat: '03 · Automation Engines', lbl: 'Orchestration', desc: 'Self-hosted n8n, Python agents, and LangGraph runners for complex logic.', reveal: 'n8n · Python · LangGraph' },
-  { cat: '04 · Global Scalability', lbl: 'Localization', desc: 'Multilingual NLP, multi-currency logic, cultural adaptation layers.', reveal: '5+ languages · ZA/UK/EU' },
-  { cat: '05 · Infrastructure', lbl: 'Systems & APIs', desc: 'GitHub pipelines, FastAPI endpoints, Firebase data layer, version-controlled deployment.', reveal: 'FastAPI · Firebase · GitHub Actions' },
-  { cat: '06 · Observability', lbl: 'Dashboards', desc: 'Management dashboards with live run-logs, retry queues, and real-time alerting.', reveal: 'HTML · CSS · JS · Firestore' },
+  { icon: 'WF', cat: '01 · Architectural Logic', lbl: 'Workflow Design', desc: 'Multi-branch logic, error-handling loops, solo-vs-fleet routing trees.', reveal: 'n8n · LangGraph · State Machines' },
+  { icon: 'AI', cat: '02 · AI / LLM Layer', lbl: 'LLM Integration', desc: 'OpenAI, LangChain memory & tools, RAG pipelines, prompt engineering.', reveal: 'GPT-4 · Claude · Vector DBs' },
+  { icon: 'OC', cat: '03 · Automation Engines', lbl: 'Orchestration', desc: 'Self-hosted n8n, Python agents, and LangGraph runners for complex logic.', reveal: 'n8n · Python · LangGraph' },
+  { icon: 'L8N', cat: '04 · Global Scalability', lbl: 'Localization', desc: 'Multilingual NLP, multi-currency logic, cultural adaptation layers.', reveal: '5+ languages · ZA/UK/EU' },
+  { icon: 'SY', cat: '05 · Infrastructure', lbl: 'Systems & APIs', desc: 'GitHub pipelines, FastAPI endpoints, Firebase data layer, version-controlled deployment.', reveal: 'FastAPI · Firebase · GitHub Actions' },
+  { icon: 'OB', cat: '06 · Observability', lbl: 'Dashboards', desc: 'Management dashboards with live run-logs, retry queues, and real-time alerting.', reveal: 'HTML · CSS · JS · Firestore' },
 ];
 
 // Build catalog

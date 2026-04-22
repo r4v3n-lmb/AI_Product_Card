@@ -236,6 +236,7 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 .stack-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
+  grid-template-rows: repeat(3, 1fr);
   border: 1px solid var(--line-2);
   background: var(--panel);
 }
@@ -245,15 +246,24 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
   border-bottom: 1px solid var(--line-2);
   position: relative;
   transition: background 0.15s ease;
+  display: flex; flex-direction: column;
 }
 .stack-cell:nth-child(2n) { border-right: 0; }
 .stack-cell:nth-last-child(-n+2) { border-bottom: 0; }
 .stack-cell:hover { background: #151a21; }
-.stack-cell:hover .reveal { opacity: 1; }
+.stack-cell:hover .reveal { opacity: 1; color: var(--blueprint); }
+.stack-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.12em;
+  color: var(--blueprint); border: 1px solid var(--blueprint);
+  padding: 3px 7px; margin-bottom: 14px; align-self: flex-start;
+  opacity: 0.6; transition: opacity 0.15s ease;
+}
+.stack-cell:hover .stack-icon { opacity: 1; }
 .stack-cell .cat { font-size: 10px; color: var(--ink-faint); letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 12px; }
 .stack-cell .lbl { font-family: 'Inter Tight'; font-size: 18px; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 8px; }
 .stack-cell .desc { font-size: 11px; color: var(--ink-dim); line-height: 1.6; }
-.stack-cell .reveal { opacity: 0; transition: opacity 0.2s ease; font-size: 10px; color: var(--ink-faint); margin-top: 10px; letter-spacing: 0.12em; text-transform: uppercase; }
+.stack-cell .reveal { opacity: 0.35; transition: opacity 0.2s ease, color 0.2s ease; font-size: 10px; color: var(--ink-faint); margin-top: auto; padding-top: 12px; letter-spacing: 0.12em; text-transform: uppercase; }
 
 /* --- Build Catalog --- */
 
@@ -615,7 +625,7 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 }
 .process-title { font-family: 'Inter Tight'; font-size: 20px; font-weight: 500; letter-spacing: -0.01em; margin-bottom: 10px; color: var(--ink); }
 .process-body { font-size: 12px; color: var(--ink-dim); line-height: 1.7; }
-.process-strip { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line-2); border-top: 0; background: var(--panel); }
+.process-strip { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line-2); border-top: 0; background: var(--panel); }
 .process-strip-cell { padding: 20px 24px; border-right: 1px solid var(--line-2); }
 .process-strip-cell:last-child { border-right: 0; }
 .process-strip-k { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--ink-faint); letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 10px; }

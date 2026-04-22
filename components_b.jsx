@@ -700,7 +700,6 @@ function HowItWorks() {
     { k: 'Sprint Cycle', v: '2 Weeks' },
     { k: 'First Deploy', v: 'Day 7' },
     { k: 'Pricing', v: 'Scope-Based' },
-    { k: 'Deliverable', v: 'Live · Hosted · Documented' },
   ];
 
   return (

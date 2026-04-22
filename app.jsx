@@ -407,6 +407,11 @@ function BootScreen() {
 /* ============ APP ============ */
 function App() {
   useEffect(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+  }, []);
+
+  useEffect(() => {
     const obs = new IntersectionObserver(
       entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
       { threshold: 0.06 }

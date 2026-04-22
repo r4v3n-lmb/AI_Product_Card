@@ -154,12 +154,14 @@ function Terminal() {
       case 'help':
         return [
           { t: 'tag',  s: '  things you can ask:' },
-          { t: 'ok',   s: '  projects   · what has been built' },
-          { t: 'ok',   s: '  pricing    · how it works & what to expect' },
-          { t: 'ok',   s: '  contact    · how to get in touch' },
-          { t: 'ok',   s: '  whoami     · who is Revan' },
-          { t: 'ok',   s: '  clear      · start over' },
-          { t: 'ok',   s: '  reboot     · replay the boot sequence' },
+          { t: 'ok',   s: '  projects        · what has been built' },
+          { t: 'ok',   s: '  pricing         · how it works & what to expect' },
+          { t: 'ok',   s: '  contact         · how to get in touch' },
+          { t: 'ok',   s: '  whoami          · who is Revan' },
+          { t: 'ok',   s: '  theme light     · switch to light mode' },
+          { t: 'ok',   s: '  theme dark      · switch to dark mode' },
+          { t: 'ok',   s: '  clear           · start over' },
+          { t: 'ok',   s: '  reboot          · replay the boot sequence' },
         ];
       case 'projects': case 'catalog':
         return (window.CATALOG || []).map(c => ({ t: 'ok', s: `  [${c.idx}] ${c.title}  ·  ${c.sector}` }));
@@ -190,6 +192,14 @@ function Terminal() {
           { t: 'tag',  s: '  github.com/r4v3n-lmb' },
           { t: 'ok',   s: '  currently accepting new briefs' },
         ];
+      case 'theme': {
+        const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+        return [
+          { t: 'tag',  s: `  current theme ........  ${cur}` },
+          { t: 'ok',   s: '  theme light  · switch to light mode' },
+          { t: 'ok',   s: '  theme dark   · switch to dark mode' },
+        ];
+      }
       default:
         return [{ t: 'warn', s: `  command not found: ${command}  (type 'help')` }];
     }
@@ -203,6 +213,13 @@ function Terminal() {
     if (command === 'reboot') {
       setLines(prev => [...prev, { t: 'prompt', s: '> reboot' }, { t: 'ok', s: '  rebooting...' }]);
       setTimeout(() => { sessionStorage.removeItem('booted'); window.location.reload(); }, 800);
+      return;
+    }
+    if (command === 'theme light' || command === 'theme dark') {
+      const t = command === 'theme light' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('theme', t);
+      setLines(prev => [...prev, { t: 'prompt', s: `> ${command}` }, { t: 'ok', s: `  theme set to ${t}.` }]);
       return;
     }
     setLines(prev => [...prev, { t: 'prompt', s: `> ${command}` }, ...getResponse(command)]);

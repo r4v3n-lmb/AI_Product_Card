@@ -205,7 +205,7 @@ function FooterBar() {
 /* ============ TOUR ============ */
 const TOUR_STEPS = [
   { target: '.hero h1',      title: 'IDENT · 01',        pos: 'bottom', body: 'Revan Lombard — AI Solutions Architect, Johannesburg. I design and deploy autonomous ops systems for SMBs that need to run 24/7 without a human in the loop.' },
-  { target: '.terminal',     title: 'STACK BOOT · 02',   pos: 'right',  body: 'Stack boot sequence. Every [✓] is a live module — n8n self-hosted, Python runners, OpenAI, LangChain, RAG vector store, Twilio, FastAPI. Not a demo stack.' },
+  { target: '.terminal',     title: 'STACK BOOT · 02',   pos: 'right',  body: 'Watch the boot sequence play out — each [✓] is a capability running in production. Once it finishes, the terminal goes interactive. Click it and type \'help\' to see what you can ask.' },
   { target: '.stack-grid',   title: 'CAPABILITIES · 02', pos: 'left',   body: 'Six capability layers, each with a specific production role. Hover any cell to reveal the exact tools running underneath.' },
   { target: '#s03',          title: 'BUILD CATALOG · 03',pos: 'bottom', body: 'Five production systems across Logistics, Retention, High-Volume, and High-Ticket sectors. Click any card to expand the full flow diagram and tech stack.' },
   { target: '#s04',          title: 'PHILOSOPHY · 04',   pos: 'bottom', body: 'Three non-negotiable build principles: ship repos not decks, build observable systems not chatbots, localise by default.' },

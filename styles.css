@@ -225,6 +225,7 @@ section:first-of-type { border-top: 0; padding-top: 16px; }
 @keyframes blink { 50% { opacity: 0; } }
 .replay-btn { margin-left: auto; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); border: 1px solid var(--line-2); padding: 3px 8px; }
 .replay-btn:hover { color: var(--ink-dim); border-color: var(--line-3); }
+.terminal-interactive-badge { font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--blueprint); border: 1px solid var(--blueprint); padding: 3px 8px; opacity: 0.75; }
 
 /* --- Split grid: terminal + stack --- */
 .split {

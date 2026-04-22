@@ -237,7 +237,14 @@ function Terminal() {
   }, [replay]);
 
   useEffect(() => { if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight; }, [lines]);
-  useEffect(() => { if (done && inputRef.current) inputRef.current.focus(); }, [done]);
+  useEffect(() => {
+    if (!done) return;
+    setLines(prev => [...prev,
+      { t: 'out', s: '' },
+      { t: 'tag', s: "  // interactive mode · type 'help' for commands" },
+    ]);
+    setTimeout(() => { if (inputRef.current) inputRef.current.focus(); }, 50);
+  }, [done]);
 
   const render = (l, i) => {
     const last = i === lines.length - 1;
@@ -258,6 +265,7 @@ function Terminal() {
       <div className="terminal-head">
         <div className="dots"><span></span><span></span><span></span></div>
         <span>zsh · revan@architect · ~/ops</span>
+        {done && <span className="terminal-interactive-badge">INTERACTIVE</span>}
         {done && <button className="replay-btn" onClick={() => setReplay(r => r+1)}>↺ REPLAY</button>}
       </div>
       <div className="terminal-body" ref={bodyRef}>

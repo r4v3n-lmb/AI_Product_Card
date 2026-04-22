@@ -339,11 +339,11 @@ function KpiCard({ label, value, unit, visible }) {
 // CORR[i][j] = how much axis j shifts per 1-unit drag of axis i
 // Negative = inverse relationship (e.g. cost cuts via headcount reduction hurt speed)
 const RADAR_CORR = [
-  [ 0,     0.25,  0.30,  0.05,  0.00], // Adoption   → surfaces automatable work & self-svc; no direct cost/speed effect
+  [ 0,     0.25,  0.30,  0.05,  0.00], // Adoption    → surfaces automatable work & self-svc; no direct cost/speed effect
   [ 0.20,  0,     0.25,  0.60,  0.65], // Automatable → root driver: directly enables speed AND cost savings
-  [ 0.15,  0.10,  0,     0.10,  0.45], // Self-Service→ cuts support costs strongly; minor speed/automatable lift
+  [ 0.15,  0.10,  0,     0.10,  0.45], // Self-Service → cuts support costs strongly; minor speed/automatable lift
   [ 0.10,  0.30,  0.15,  0,     0.20], // Speed Gain  → faster tasks = some labour saving; correlates with automatable
-  [ 0.05,  0.25,  0.30, -0.20,  0   ], // Cost Cut    → drives self-svc adoption; headcount cuts HURT speed
+  [ 0.05,  0.60,  0.30, -0.20,  0   ], // Cost Cut    → automation-driven savings loop back into automatable (strong); self-svc up; speed still hurt
 ];
 
 function RadarChart({ data, visible, activeVal, onActiveVal }) {

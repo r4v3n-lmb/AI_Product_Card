@@ -254,11 +254,21 @@ function ProofGrid() {
   const total = cells.reduce((a, b) => a + b, 0) * 2 + 180;
   const streak = 47;
   const testimonials = window.TESTIMONIALS || [window.TESTIMONIAL].filter(Boolean);
+  const [hovCell, setHovCell] = useState(null);
+  const [activeT, setActiveT] = useState(0);
 
   const now = new Date();
   const startD = new Date(now);
   startD.setDate(startD.getDate() - 52 * 7);
   const fmtDate = d => d.toLocaleDateString('en-GB', { month: 'short', year: 'numeric' });
+
+  const cellDate = i => { const d = new Date(startD); d.setDate(d.getDate() + i); return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); };
+  const levelLabel = ['No activity', 'Light — review or minor fix', 'Active — feature shipped', 'Heavy — production push', 'Major — system deployment'];
+
+  useEffect(() => {
+    const t = setInterval(() => setActiveT(i => (i + 1) % testimonials.length), 6000);
+    return () => clearInterval(t);
+  }, [testimonials.length]);
 
   return (
     <div className="proof-grid">
@@ -274,8 +284,16 @@ function ProofGrid() {
             <div className="faint" style={{fontSize:10, letterSpacing:'0.16em', textTransform:'uppercase', marginTop:4}}>current streak</div>
           </div>
         </div>
+        {hovCell !== null
+          ? <div className="hcell-tip"><span className="faint">{cellDate(hovCell)} · </span><span style={{color: cells[hovCell] > 0 ? 'var(--ok)' : 'var(--ink-faint)'}}>{levelLabel[cells[hovCell]]}</span></div>
+          : <div className="hcell-tip faint">hover a cell</div>
+        }
         <div className="heatmap">
-          {cells.map((l, i) => <div key={i} className="hcell" data-l={l}></div>)}
+          {cells.map((l, i) => (
+            <div key={i} className="hcell" data-l={l}
+              onMouseEnter={() => setHovCell(i)}
+              onMouseLeave={() => setHovCell(null)} />
+          ))}
         </div>
         <div className="heatmap-footer">
           <span>{fmtDate(startD)}</span>
@@ -291,24 +309,32 @@ function ProofGrid() {
           <span>{fmtDate(now)}</span>
         </div>
       </div>
-      <div className="testimonial-row">
-        {testimonials.map((t, i) => (
-          <div key={i} className="testimonial">
-            <blockquote className="serif">{t.q}</blockquote>
-            <div className="attr">
-              <span>— {t.who}</span>
-              <span className="faint">{t.company}</span>
-            </div>
+      <div className="testimonial-carousel" onMouseEnter={() => {}} >
+        <div className="testimonial">
+          <blockquote className="serif">{testimonials[activeT].q}</blockquote>
+          <div className="attr">
+            <span>— {testimonials[activeT].who}</span>
+            <span className="faint">{testimonials[activeT].company}</span>
           </div>
-        ))}
+        </div>
+        <div className="t-nav">
+          <button className="t-arrow" onClick={() => setActiveT(i => (i - 1 + testimonials.length) % testimonials.length)}>←</button>
+          <div className="t-dots">
+            {testimonials.map((_, i) => (
+              <div key={i} className={`t-dot${i === activeT ? ' active' : ''}`} onClick={() => setActiveT(i)} />
+            ))}
+          </div>
+          <button className="t-arrow" onClick={() => setActiveT(i => (i + 1) % testimonials.length)}>→</button>
+        </div>
       </div>
     </div>
   );
 }
 
 /* ============ METRICS DASHBOARD ============ */
-function KpiCard({ label, value, unit, visible }) {
+function KpiCard({ label, value, unit, visible, source }) {
   const [display, setDisplay] = useState('0');
+  const [showSource, setShowSource] = useState(false);
   useEffect(() => {
     if (!visible) return;
     const prefix = value.startsWith('$') ? '$' : '';
@@ -328,9 +354,12 @@ function KpiCard({ label, value, unit, visible }) {
     return () => cancelAnimationFrame(raf);
   }, [visible]);
   return (
-    <div className="kpi-card">
+    <div className="kpi-card" onClick={() => source && setShowSource(s => !s)}
+      style={source ? { cursor: 'pointer' } : undefined}>
       <div className="kpi-value serif">{display}<span className="kpi-unit">{unit}</span></div>
       <div className="kpi-label">{label}</div>
+      {showSource && source && <div className="kpi-source">{source}</div>}
+      {source && !showSource && <div className="kpi-hint">tap for source</div>}
     </div>
   );
 }
@@ -620,16 +649,32 @@ function VolumeChart({ data, ceil = 1600, pct = false }) {
   );
 }
 
+const SECTOR_INSIGHTS = {
+  'Technology':     'Early movers — AI is now core infrastructure. Advantage comes from depth of implementation, not adoption itself.',
+  'Manufacturing':  'Predictive maintenance and quality control driving near-full adoption. High asset values make the ROI undeniable.',
+  'Financial Svcs': 'Fraud detection, automated underwriting, and compliance monitoring leading the wave.',
+  'Government':     'Adoption accelerating post-2023 — but procurement cycles, legacy systems, and compliance remain the blockers.',
+  'Healthcare':     'Diagnostics and admin automation gaining ground. Regulation slows pace, but the pressure is building fast.',
+  'Retail':         'Personalisation engines and inventory management are the primary entry points. Conversion lifts proving the case.',
+  'Energy':         'Grid optimisation and predictive maintenance driving steady growth. Long asset lifecycles make AI ROI compounding.',
+  'Legal / Prof.':  'Slowest adopter. Liability concerns and billable-hour business models structurally resist automation — for now.',
+};
+
 /* ============ AI ADOPTION CHART (Lollipop) ============ */
 function AdoptionChart({ data, visible }) {
   const [hovIdx, setHovIdx] = useState(null);
+  const [pinnedIdx, setPinnedIdx] = useState(null);
   const W = 360, H = 232;
   const pad = { l: 98, r: 44, t: 12, b: 18 };
   const pw = W - pad.l - pad.r;
   const rowH = (H - pad.t - pad.b) / data.length;
   const ry = i => pad.t + i * rowH + rowH / 2;
   const rx = pct => pad.l + (pct / 100) * pw;
+  const activeIdx = pinnedIdx !== null ? pinnedIdx : hovIdx;
+  const insight = activeIdx !== null ? SECTOR_INSIGHTS[data[activeIdx]?.sector] : null;
+
   return (
+    <div>
     <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto' }}>
       {[50, 100].map(v => (
         <line key={v} x1={rx(v)} x2={rx(v)} y1={pad.t} y2={H - pad.b}
@@ -637,13 +682,15 @@ function AdoptionChart({ data, visible }) {
           strokeDasharray={v < 100 ? '2 3' : undefined} opacity="0.45" />
       ))}
       {data.map((d, i) => {
-        const hov = hovIdx === i;
+        const hov = activeIdx === i;
+        const isPinned = pinnedIdx === i;
         const dotX = rx(d.pct);
         return (
           <g key={i}
-            style={{ opacity: visible ? 1 : 0, transition: `opacity 0.5s ease ${i * 65}ms` }}
+            style={{ opacity: visible ? 1 : 0, transition: `opacity 0.5s ease ${i * 65}ms`, cursor: 'pointer' }}
             onMouseEnter={() => setHovIdx(i)}
-            onMouseLeave={() => setHovIdx(null)}>
+            onMouseLeave={() => setHovIdx(null)}
+            onClick={() => setPinnedIdx(pinnedIdx === i ? null : i)}>
             <text x={pad.l - 8} y={ry(i) + 3.5}
               fill={hov ? 'var(--ink)' : 'var(--ink-dim)'}
               fontSize="9" textAnchor="end" fontFamily="JetBrains Mono, monospace"
@@ -673,6 +720,11 @@ function AdoptionChart({ data, visible }) {
       <text x={rx(100)} y={H - 3} fill="var(--ink-faint)" fontSize="7"
         textAnchor="middle" fontFamily="JetBrains Mono, monospace">100%</text>
     </svg>
+    {insight
+      ? <div className="adoption-insight"><span className="adoption-insight-sector">{data[activeIdx].sector} · </span>{insight}</div>
+      : <div className="adoption-insight adoption-hint">click a sector for context</div>
+    }
+    </div>
   );
 }
 
@@ -796,18 +848,22 @@ function MetricsDash() {
 
 /* ============ HOW IT WORKS ============ */
 function HowItWorks() {
+  const [expandedStep, setExpandedStep] = useState(null);
   const steps = [
     {
       num: '01', title: 'Brief',
       body: 'Book a 20-min call or drop a WhatsApp. Tell me what\'s broken, slow, or manual. I\'ll ask the right questions and come back with an architecture sketch — not a proposal deck.',
+      example: 'e.g. A towing operator is losing 40% of after-hours calls to voicemail. In 20 mins we map the intake flow, edge cases, and driver routing logic — and return with a sketch.',
     },
     {
       num: '02', title: 'Build',
       body: 'Once aligned, we sprint. First live flow ships in week one. Every step is version-controlled so you can see exactly what\'s running and why.',
+      example: 'e.g. Day 3: Twilio agent live and taking calls. Day 5: GPS verify + dispatcher SMS working. Day 7: owner dashboard with live job logs deployed.',
     },
     {
       num: '03', title: 'Ship',
       body: 'Production-ready system with error handling, retry queues, and a management dashboard. Documented, version-controlled, and genuinely yours to own.',
+      example: 'e.g. Handed over: GitHub repo, Firestore dashboard, error-handling docs, and a 30-day window for live edge cases that only show up in production.',
     },
   ];
   const specs = [
@@ -820,13 +876,16 @@ function HowItWorks() {
     <div className="process-wrap">
       <div className="process-steps">
         {steps.map((s, i) => (
-          <div key={s.num} className="process-cell">
+          <div key={s.num} className={`process-cell${expandedStep === s.num ? ' process-expanded' : ''}`}
+            style={{cursor:'pointer'}} onClick={() => setExpandedStep(expandedStep === s.num ? null : s.num)}>
             <div className="process-hd">
               <div className="process-dot">{s.num}</div>
               {i < steps.length - 1 && <div className="process-conn"></div>}
             </div>
             <h4 className="process-title serif">{s.title}</h4>
             <p className="process-body">{s.body}</p>
+            {expandedStep === s.num && <p className="process-example">{s.example}</p>}
+            <div className="process-toggle">{expandedStep === s.num ? '− less' : '+ example'}</div>
           </div>
         ))}
       </div>

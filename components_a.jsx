@@ -297,15 +297,21 @@ function Terminal() {
 
 /* ============ STACK GRID ============ */
 function StackGrid() {
+  const [expanded, setExpanded] = useState(null);
   return (
     <div className="stack-grid">
       {window.STACK.map((s, i) => (
-        <div key={i} className="stack-cell">
+        <div key={i} className={`stack-cell${expanded === i ? ' stack-expanded' : ''}`}
+          onClick={() => setExpanded(expanded === i ? null : i)}
+          style={{cursor:'pointer'}}>
           {s.icon && <div className="stack-icon">{s.icon}</div>}
           <div className="cat">{s.cat}</div>
           <div className="lbl serif">{s.lbl}</div>
           <div className="desc">{s.desc}</div>
           <div className="reveal">→ {s.reveal}</div>
+          {expanded === i && s.detail && (
+            <div className="stack-detail">{s.detail}</div>
+          )}
         </div>
       ))}
     </div>

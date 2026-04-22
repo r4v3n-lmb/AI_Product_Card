@@ -1,11 +1,11 @@
 // Tech stack
 window.STACK = [
-  { icon: 'WF', cat: '01 · Architectural Logic', lbl: 'Workflow Design', desc: 'Multi-branch logic, error-handling loops, solo-vs-fleet routing trees.', reveal: 'n8n · LangGraph · State Machines' },
-  { icon: 'AI', cat: '02 · AI / LLM Layer', lbl: 'LLM Integration', desc: 'OpenAI, LangChain memory & tools, RAG pipelines, prompt engineering.', reveal: 'GPT-4 · Claude · Vector DBs' },
-  { icon: 'OC', cat: '03 · Automation Engines', lbl: 'Orchestration', desc: 'Self-hosted n8n, Python agents, and LangGraph runners for complex logic.', reveal: 'n8n · Python · LangGraph' },
-  { icon: 'L8N', cat: '04 · Global Scalability', lbl: 'Localization', desc: 'Multilingual NLP, multi-currency logic, cultural adaptation layers.', reveal: '5+ languages · ZA/UK/EU' },
-  { icon: 'SY', cat: '05 · Infrastructure', lbl: 'Systems & APIs', desc: 'GitHub pipelines, FastAPI endpoints, Firebase data layer, version-controlled deployment.', reveal: 'FastAPI · Firebase · GitHub Actions' },
-  { icon: 'OB', cat: '06 · Observability', lbl: 'Dashboards', desc: 'Management dashboards with live run-logs, retry queues, and real-time alerting.', reveal: 'HTML · CSS · JS · Firestore' },
+  { icon: 'WF', cat: '01 · Architectural Logic', lbl: 'Workflow Design', desc: 'Multi-branch logic, error-handling loops, solo-vs-fleet routing trees.', reveal: 'n8n · LangGraph · State Machines', detail: 'Live in: Dispatch Router — multi-branch logic routes 5 drivers across 3 zones with real-time GPS verification and automatic failover.' },
+  { icon: 'AI', cat: '02 · AI / LLM Layer', lbl: 'LLM Integration', desc: 'OpenAI, LangChain memory & tools, RAG pipelines, prompt engineering.', reveal: 'GPT-4 · Claude · Vector DBs', detail: 'Live in: Legal Qualifier — RAG pipeline screens leads against jurisdiction DB, win-rate history, and case-type filters before a booking slot is offered.' },
+  { icon: 'OC', cat: '03 · Automation Engines', lbl: 'Orchestration', desc: 'Self-hosted n8n, Python agents, and LangGraph runners for complex logic.', reveal: 'n8n · Python · LangGraph', detail: 'Live in: Pizza Taker — n8n workflow handles 40+ concurrent peak-hour orders, parsing modifiers and syncing directly to the kitchen printer.' },
+  { icon: 'L8N', cat: '04 · Global Scalability', lbl: 'Localization', desc: 'Multilingual NLP, multi-currency logic, cultural adaptation layers.', reveal: '5+ languages · ZA/UK/EU', detail: 'Live in: Real Estate Localizer — one listing becomes 5 language variants, each with market-specific selling-point reordering (garden-first for UK, security-first for ZA).' },
+  { icon: 'SY', cat: '05 · Infrastructure', lbl: 'Systems & APIs', desc: 'GitHub pipelines, FastAPI endpoints, Firebase data layer, version-controlled deployment.', reveal: 'FastAPI · Firebase · GitHub Actions', detail: 'Live in: Salon Engine — FastAPI webhook receives Booksy appointment events and triggers a rebook sequence tailored per service type and client history.' },
+  { icon: 'OB', cat: '06 · Observability', lbl: 'Dashboards', desc: 'Management dashboards with live run-logs, retry queues, and real-time alerting.', reveal: 'HTML · CSS · JS · Firestore', detail: 'Live in: Fleet Dashboard — owner sees live run-logs, retry queue, driver status, and job count from a mobile browser at 2am.' },
 ];
 
 // Build catalog
@@ -100,10 +100,10 @@ window.CATALOG = [
 
 window.METRICS = {
   kpis: [
-    { label: 'USING AI IN OPERATIONS',   value: '72',   unit: '%' },
-    { label: 'ANNUAL AI VALUE POTENTIAL', value: '$4.4', unit: 'T' },
-    { label: 'FASTER TASK COMPLETION',    value: '56',   unit: '%' },
-    { label: 'SERVICE COST REDUCTION',    value: '40',   unit: '%' },
+    { label: 'USING AI IN OPERATIONS',   value: '72',   unit: '%', source: 'McKinsey "State of AI" 2024 — % of organisations using AI in at least one business function' },
+    { label: 'ANNUAL AI VALUE POTENTIAL', value: '$4.4', unit: 'T', source: 'McKinsey Global Institute — estimated annual economic value unlockable by AI across all sectors' },
+    { label: 'FASTER TASK COMPLETION',    value: '56',   unit: '%', source: 'GitHub / Microsoft Research 2024 — productivity lift for AI-augmented knowledge workers' },
+    { label: 'SERVICE COST REDUCTION',    value: '40',   unit: '%', source: 'McKinsey — average cost reduction in customer-facing operations from AI deployment' },
   ],
   outcomes: [
     { label: 'Enterprise Adoption',   short: 'Adoption',    value: 72 },

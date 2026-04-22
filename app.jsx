@@ -158,14 +158,17 @@ function ChatFloater() {
       </div>
       <div className={`chat-float ${open ? 'open' : ''}`}>
         <div className="chat-head">
+          <div className="dots"><span></span><span></span><span></span></div>
           <span><span className="pulse"></span>INTAKE AGENT · ONLINE</span>
-          <button className="close" onClick={() => setOpen(false)}>✕ CLOSE</button>
+          <button className="close" onClick={() => setOpen(false)}>✕</button>
         </div>
         <div className="chat-body" ref={bodyRef}>
           {msgs.map((m, i) => (
-            <div key={i} className={`msg ${m.r}`}>{m.t}</div>
+            <div key={i} className={`line ${m.r === 'bot' ? 'tag2' : 'prompt'}`}>
+              {m.r === 'user' ? `> ${m.t}` : `  ${m.t}`}
+            </div>
           ))}
-          {thinking && <div className="msg bot typing">▌ thinking...</div>}
+          {thinking && <div className="line tag2">  ▌<span className="caret"></span></div>}
         </div>
         <div className="chat-suggests">
           {suggests.map(s => (
@@ -173,12 +176,15 @@ function ChatFloater() {
           ))}
         </div>
         <div className="chat-input">
+          <span className="chat-prompt-sym">&gt;&nbsp;</span>
           <input
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && send()}
-            placeholder="Ask about systems, pricing, timing..." />
-          <button onClick={() => send()}>SEND</button>
+            placeholder="ask anything..."
+            spellCheck={false}
+            autoComplete="off" />
+          <button onClick={() => send()}>↵</button>
         </div>
       </div>
     </>

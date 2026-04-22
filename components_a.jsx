@@ -153,31 +153,29 @@ function Terminal() {
     switch (command) {
       case 'help':
         return [
-          { t: 'tag',  s: '  available commands:' },
-          { t: 'ok',   s: '  help       · show this list' },
-          { t: 'ok',   s: '  projects   · list build catalog' },
-          { t: 'ok',   s: '  status     · live system status' },
-          { t: 'ok',   s: '  pricing    · engagement rates' },
-          { t: 'ok',   s: '  contact    · direct channels' },
-          { t: 'ok',   s: '  whoami     · identity' },
-          { t: 'ok',   s: '  clear      · reset terminal' },
+          { t: 'tag',  s: '  things you can ask:' },
+          { t: 'ok',   s: '  projects   · what has been built' },
+          { t: 'ok',   s: '  pricing    · how it works & what to expect' },
+          { t: 'ok',   s: '  contact    · how to get in touch' },
+          { t: 'ok',   s: '  whoami     · who is Revan' },
+          { t: 'ok',   s: '  clear      · start over' },
         ];
       case 'projects': case 'catalog':
         return (window.CATALOG || []).map(c => ({ t: 'ok', s: `  [${c.idx}] ${c.title}  ·  ${c.sector}` }));
       case 'status':
         return [
-          { t: 'tag',  s: '  systems_online ............  5 / 5' },
-          { t: 'tag',  s: '  avg_response_time ..........  420ms' },
-          { t: 'tag',  s: '  uptime_30d .................  99.94%' },
-          { t: 'tag',  s: '  active_automations .........  18' },
-          { t: 'warn', s: '  queue.depth ................  3 jobs pending' },
+          { t: 'tag',  s: '  systems online ............  5 / 5' },
+          { t: 'tag',  s: '  average response time .....  420ms' },
+          { t: 'tag',  s: '  uptime (last 30 days) ......  99.94%' },
+          { t: 'tag',  s: '  active automations .........  18' },
+          { t: 'warn', s: '  jobs in queue ..............  3 pending' },
         ];
       case 'pricing':
         return [
           { t: 'tag',  s: '  model ....................  scope-based · no retainers' },
           { t: 'tag',  s: '  quote_turnaround .........  fixed quote within 48h' },
           { t: 'tag',  s: '  sprint_duration ..........  2-week cycle' },
-          { t: 'tag',  s: '  support_window ...........  90 days post-deploy' },
+          { t: 'tag',  s: '  support_window ...........  30 days post-deploy' },
           { t: 'tag',  s: '  delivery .................  repo · dashboard · docs' },
           { t: 'ok',   s: '  book a diagnostic call to scope your system' },
         ];
@@ -185,11 +183,11 @@ function Terminal() {
         return (window.CONTACT || []).map(c => ({ t: 'tag', s: `  ${String(c.k).padEnd(14)}  ${c.v}` }));
       case 'whoami':
         return [
-          { t: 'out',  s: 'revan.lombard :: ai-solutions-architect' },
-          { t: 'tag',  s: '  location ................  johannesburg, za' },
-          { t: 'tag',  s: '  languages ...............  en · af' },
-          { t: 'tag',  s: '  github ..................  @r4v3n-lmb' },
-          { t: 'ok',   s: '  status ..................  accepting briefs' },
+          { t: 'out',  s: '  Revan Lombard — AI Solutions Architect' },
+          { t: 'tag',  s: '  based in Johannesburg, South Africa' },
+          { t: 'tag',  s: '  builds AI systems for real businesses' },
+          { t: 'tag',  s: '  github.com/r4v3n-lmb' },
+          { t: 'ok',   s: '  currently accepting new briefs' },
         ];
       default:
         return [{ t: 'warn', s: `  command not found: ${command}  (type 'help')` }];

@@ -335,8 +335,9 @@ function KpiCard({ label, value, unit, visible }) {
   );
 }
 
-function RadarChart({ data, visible }) {
+function RadarChart({ data, visible, activeVal, onActiveVal }) {
   const [hovIdx, setHovIdx] = useState(null);
+  const effectiveIdx = hovIdx !== null ? hovIdx : (activeVal != null ? data.findIndex(d => d.value === activeVal) : -1);
   const W = 400, H = 290;
   const cx = W / 2, cy = H / 2 + 10;
   const R = 105;
@@ -370,12 +371,12 @@ function RadarChart({ data, visible }) {
           stroke="var(--blueprint)" strokeWidth="1.5" strokeLinejoin="round" />
         {dataPts.map(([x, y], i) => (
           <circle key={i} cx={x} cy={y}
-            r={hovIdx === i ? 6 : 3.5}
-            fill={hovIdx === i ? 'var(--blueprint)' : 'var(--bg)'}
+            r={effectiveIdx === i ? 6 : 3.5}
+            fill={effectiveIdx === i ? 'var(--blueprint)' : 'var(--bg)'}
             stroke="var(--blueprint)" strokeWidth="1.5"
-            style={{ cursor: 'default' }}
-            onMouseEnter={() => setHovIdx(i)}
-            onMouseLeave={() => setHovIdx(null)} />
+            style={{ cursor: 'pointer' }}
+            onMouseEnter={() => { setHovIdx(i); onActiveVal?.(data[i].value); }}
+            onMouseLeave={() => { setHovIdx(null); onActiveVal?.(null); }} />
         ))}
       </g>
       {data.map((d, i) => {
@@ -383,23 +384,23 @@ function RadarChart({ data, visible }) {
         const anchor = lx > cx + 15 ? 'start' : lx < cx - 15 ? 'end' : 'middle';
         return (
           <text key={i} x={lx} y={ly + 3} textAnchor={anchor}
-            fill={hovIdx === i ? 'var(--ink)' : 'var(--ink-dim)'}
+            fill={effectiveIdx === i ? 'var(--ink)' : 'var(--ink-dim)'}
             fontSize="8.5" fontFamily="JetBrains Mono, monospace"
             style={{ transition: 'fill 0.15s' }}>
             {d.short || d.label}
           </text>
         );
       })}
-      {hovIdx !== null && (
+      {effectiveIdx !== -1 && (
         <g>
           <text x={cx} y={cy - 2} textAnchor="middle" fill="var(--blueprint)"
             fontSize="26" fontFamily="Inter Tight"
             style={{ fontWeight: 700, letterSpacing: '-0.03em' }}>
-            {data[hovIdx].value}%
+            {data[effectiveIdx].value}%
           </text>
           <text x={cx} y={cy + 13} textAnchor="middle" fill="var(--ink-faint)"
             fontSize="7.5" fontFamily="JetBrains Mono, monospace">
-            {data[hovIdx].short || data[hovIdx].label}
+            {data[effectiveIdx].short || data[effectiveIdx].label}
           </text>
         </g>
       )}
@@ -407,8 +408,18 @@ function RadarChart({ data, visible }) {
   );
 }
 
+const YEAR_NOTES = {
+  '2020': 'Remote work boom — AI adoption accelerates globally',
+  '2022': 'Post-pandemic baseline: 50% of enterprises using AI',
+  '2023': 'ChatGPT launches — consumer AI goes mainstream',
+  '2024': 'Enterprise GenAI rollouts reach critical mass',
+  '2025': 'Gartner forecast: 82% of enterprises using AI',
+  '2026': 'Gartner forecast: 89% adoption — near-universal',
+};
+
 function VolumeChart({ data, ceil = 1600, pct = false }) {
   const [hovIdx, setHovIdx] = useState(null);
+  const [clickedIdx, setClickedIdx] = useState(null);
   const svgRef = useRef(null);
   const W = 480, H = 190;
   const pad = { t: 20, r: 20, b: 34, l: 44 };
@@ -453,7 +464,10 @@ function VolumeChart({ data, ceil = 1600, pct = false }) {
   const tx = hovPt ? Math.min(Math.max(hovPt[0] - TW / 2, pad.l), W - pad.r - TW) : 0;
   const ty = hovPt ? Math.max(hovPt[1] - TH - 10, pad.t) : 0;
 
+  const clickNote = clickedIdx !== null ? YEAR_NOTES[data[clickedIdx].month] : null;
+
   return (
+    <div>
     <svg ref={svgRef} viewBox={`0 0 ${W} ${H}`} className="volume-svg" preserveAspectRatio="xMidYMid meet"
       onMouseMove={handleMouseMove} onMouseLeave={() => setHovIdx(null)}>
       {gridVals.map(v => (
@@ -495,13 +509,17 @@ function VolumeChart({ data, ceil = 1600, pct = false }) {
       {/* Data points */}
       {pts.map(([px, py], i) => {
         const isForecast = hasForecasts && i >= forecastStart;
+        const isClicked = clickedIdx === i;
+        const hasNote = !!YEAR_NOTES[data[i].month];
         return (
           <circle key={i} cx={px} cy={py}
-            r={i === hovIdx ? 4.5 : 2.5}
-            fill={i === hovIdx ? (isForecast ? 'rgba(122,184,212,0.4)' : 'var(--blueprint)') : 'var(--bg)'}
-            stroke="var(--blueprint)"
-            strokeWidth={isForecast ? 1 : 1.5}
-            opacity={isForecast ? 0.6 : 1} />
+            r={i === hovIdx ? 4.5 : isClicked ? 4 : 2.5}
+            fill={i === hovIdx || isClicked ? (isForecast ? 'rgba(122,184,212,0.4)' : 'var(--blueprint)') : 'var(--bg)'}
+            stroke={isClicked ? 'var(--accent)' : 'var(--blueprint)'}
+            strokeWidth={isForecast ? 1 : isClicked ? 2 : 1.5}
+            opacity={isForecast ? 0.6 : 1}
+            style={{ cursor: hasNote ? 'pointer' : 'default' }}
+            onClick={() => hasNote && setClickedIdx(clickedIdx === i ? null : i)} />
         );
       })}
       {xIdx.map(i => (
@@ -524,6 +542,13 @@ function VolumeChart({ data, ceil = 1600, pct = false }) {
         </g>
       )}
     </svg>
+    {clickNote && (
+      <div style={{fontSize:11, color:'var(--blueprint)', padding:'6px 10px', border:'1px solid var(--line-2)', marginTop:4, letterSpacing:'0.08em', lineHeight:1.5}}>
+        <span style={{color:'var(--ink-faint)', marginRight:6}}>{data[clickedIdx].month} ·</span>{clickNote}
+      </div>
+    )}
+    {!clickNote && <div style={{fontSize:10, color:'var(--ink-faint)', marginTop:4, letterSpacing:'0.1em'}}>click a year for context</div>}
+    </div>
   );
 }
 
@@ -603,22 +628,23 @@ function RingGauge({ pct, visible, delay, hovered }) {
   );
 }
 
-function ImpactChart({ data, visible }) {
+function ImpactChart({ data, visible, activeVal, onActiveVal }) {
   const [hovRow, setHovRow] = useState(null);
+  const effectiveRow = hovRow !== null ? hovRow : (activeVal != null ? data.findIndex(d => d.pct === activeVal) : -1);
   return (
     <div className="impact-chart">
       {data.map((d, i) => (
         <div key={i} className="impact-row"
-          onMouseEnter={() => setHovRow(i)}
-          onMouseLeave={() => setHovRow(null)}>
-          <RingGauge pct={d.pct} visible={visible} delay={i * 120} hovered={hovRow === i} />
+          onMouseEnter={() => { setHovRow(i); onActiveVal?.(d.pct); }}
+          onMouseLeave={() => { setHovRow(null); onActiveVal?.(null); }}>
+          <RingGauge pct={d.pct} visible={visible} delay={i * 120} hovered={effectiveRow === i} />
           <div className="impact-meta">
             <div className="impact-pct"
-              style={hovRow === i ? { color: 'var(--accent)' } : undefined}>
+              style={effectiveRow === i ? { color: 'var(--accent)' } : undefined}>
               {d.pct}%
             </div>
             <div className="impact-label"
-              style={hovRow === i ? { color: 'var(--ink)' } : undefined}>
+              style={effectiveRow === i ? { color: 'var(--ink)' } : undefined}>
               {d.label}
             </div>
             <div className="impact-tag">{d.tag}</div>
@@ -630,7 +656,7 @@ function ImpactChart({ data, visible }) {
 }
 
 /* ============ AI IMPACT PANEL ============ */
-function AIImpactPanel() {
+function AIImpactPanel({ activeVal, onActiveVal }) {
   const [visible, setVisible] = useState(false);
   const ref = useRef(null);
   useEffect(() => {
@@ -648,7 +674,7 @@ function AIImpactPanel() {
         </div>
         <div className="chart-panel">
           <div className="chart-label">AUTOMATION IMPACT · % IMPROVEMENT</div>
-          <ImpactChart data={impact} visible={visible} />
+          <ImpactChart data={impact} visible={visible} activeVal={activeVal} onActiveVal={onActiveVal} />
         </div>
       </div>
       <div className="ai-impact-footer">Source: {source}</div>
@@ -658,6 +684,7 @@ function AIImpactPanel() {
 
 function MetricsDash() {
   const [visible, setVisible] = useState(false);
+  const [activeVal, setActiveVal] = useState(null);
   const ref = useRef(null);
   useEffect(() => {
     const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) setVisible(true); }, { threshold: 0.2 });
@@ -674,8 +701,8 @@ function MetricsDash() {
       <div className="metrics-charts">
         <div className="chart-panel">
           <div className="chart-label" style={{paddingBottom:4, marginBottom:0, borderBottom:0}}>AI PERFORMANCE · FIVE-DIMENSION INDEX</div>
-          <div className="chart-note">enterprise averages — hover to inspect</div>
-          <RadarChart data={m.outcomes} visible={visible} />
+          <div className="chart-note">enterprise averages — hover a point to cross-highlight below</div>
+          <RadarChart data={m.outcomes} visible={visible} activeVal={activeVal} onActiveVal={setActiveVal} />
         </div>
         <div className="chart-panel" style={{display:'flex',flexDirection:'column'}}>
           <div className="chart-label">AI ADOPTION GROWTH · % ORGS 2017–2026</div>
@@ -694,7 +721,7 @@ function MetricsDash() {
       </div>
       {m.source && <div className="metrics-chart-source">Source: {m.source}</div>}
       <div className="metrics-section-label"><span>SECTOR &amp; IMPACT BENCHMARKS · 2024–25</span></div>
-      <AIImpactPanel />
+      <AIImpactPanel activeVal={activeVal} onActiveVal={setActiveVal} />
     </div>
   );
 }
